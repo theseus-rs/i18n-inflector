@@ -15,7 +15,7 @@ keywords = ["inflector", "internationalization", "localization", "i18n", "l10n"]
 license = "Apache-2.0 OR MIT"
 repository = "https://github.com/theseus-rs/i18n-inflector"
 rust-version = "1.92.0"
-version = "0.1.1"
+version = "0.2.0"
 
 [workspace.lints.rust]
 dead_code = "allow"
