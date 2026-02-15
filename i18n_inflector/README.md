@@ -15,13 +15,21 @@ internationalized context.
 ```rust
 use i18n_inflector::{singularize, pluralize};
 
-// Singularize
+// English
 assert_eq!(singularize("en", "users").unwrap(), "user");
+assert_eq!(singularize("en", "categories").unwrap(), "category");
+
+let plurals = pluralize("en", "user").unwrap();
+assert!(plurals.iter().any(|v| v == "users"));
+
+// Spanish
 assert_eq!(singularize("es", "ciudades").unwrap(), "ciudad");
 
-// Pluralize
-let plurals = pluralize("en", "user").unwrap();
-assert!(plurals.contains(&"users".to_string()));
+// French
+assert_eq!(singularize("fr", "journaux").unwrap(), "journal");
+
+// Japanese
+assert_eq!(singularize("ja", "user").unwrap(), "user");
 
 // Unsupported locale returns an error
 assert!(singularize("xx", "users").is_err());
