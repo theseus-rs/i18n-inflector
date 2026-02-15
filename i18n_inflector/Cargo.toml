@@ -1,0 +1,25 @@
+[package]
+authors.workspace = true
+categories.workspace = true
+description = "Multilingual noun singularization and pluralization for all ISO 639 two-letter language codes"
+edition.workspace = true
+keywords.workspace = true
+license.workspace = true
+name = "i18n_inflector"
+repository.workspace = true
+rust-version.workspace = true
+version.workspace = true
+
+[lints]
+workspace = true
+
+[features]
+default = ["std"]
+std = []
+
+[[bench]]
+name = "inflector"
+harness = false
+
+[dev-dependencies]
+criterion = { workspace = true }
