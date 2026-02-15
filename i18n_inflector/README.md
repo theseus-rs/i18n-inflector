@@ -39,133 +39,64 @@ assert!(singularize("xx", "users").is_err());
 
 The following ISO 639-1 language codes are supported:
 
-| Code | Language          |
-|------|-------------------|
-| af   | Afrikaans         |
-| am   | Amharic           |
-| an   | Aragonese         |
-| ar   | Arabic            |
-| as   | Assamese          |
-| az   | Azerbaijani       |
-| be   | Belarusian        |
-| bg   | Bulgarian         |
-| bn   | Bengali           |
-| bo   | Tibetan           |
-| br   | Breton            |
-| bs   | Bosnian           |
-| ca   | Catalan           |
-| co   | Corsican          |
-| cs   | Czech             |
-| cy   | Welsh             |
-| da   | Danish            |
-| de   | German            |
-| el   | Greek             |
-| en   | English           |
-| eo   | Esperanto         |
-| es   | Spanish           |
-| et   | Estonian          |
-| eu   | Basque            |
-| fa   | Persian           |
-| fi   | Finnish           |
-| fo   | Faroese           |
-| fr   | French            |
-| fy   | Western Frisian   |
-| ga   | Irish             |
-| gd   | Scottish Gaelic   |
-| gl   | Galician          |
-| gu   | Gujarati          |
-| gv   | Manx              |
-| ha   | Hausa             |
-| he   | Hebrew            |
-| hi   | Hindi             |
-| hr   | Croatian          |
-| ht   | Haitian Creole    |
-| hu   | Hungarian         |
-| hy   | Armenian          |
-| id   | Indonesian        |
-| ig   | Igbo              |
-| is   | Icelandic         |
-| it   | Italian           |
-| ja   | Japanese          |
-| jv   | Javanese          |
-| ka   | Georgian          |
-| kk   | Kazakh            |
-| km   | Khmer             |
-| kn   | Kannada           |
-| ko   | Korean            |
-| ku   | Kurdish           |
-| kw   | Cornish           |
-| ky   | Kyrgyz            |
-| la   | Latin             |
-| lb   | Luxembourgish     |
-| lo   | Lao               |
-| lt   | Lithuanian        |
-| lv   | Latvian           |
-| mg   | Malagasy          |
-| mi   | Māori             |
-| mk   | Macedonian        |
-| ml   | Malayalam         |
-| mn   | Mongolian         |
-| mr   | Marathi           |
-| ms   | Malay             |
-| mt   | Maltese           |
-| my   | Burmese           |
-| nb   | Norwegian Bokmål  |
-| nd   | Northern Ndebele  |
-| ne   | Nepali            |
-| nl   | Dutch             |
-| nn   | Norwegian Nynorsk |
-| no   | Norwegian         |
-| nr   | Southern Ndebele  |
-| oc   | Occitan           |
-| or   | Odia              |
-| pa   | Punjabi           |
-| pl   | Polish            |
-| ps   | Pashto            |
-| pt   | Portuguese        |
-| qu   | Quechua           |
-| rm   | Romansh           |
-| ro   | Romanian          |
-| ru   | Russian           |
-| rw   | Kinyarwanda       |
-| sc   | Sardinian         |
-| sd   | Sindhi            |
-| si   | Sinhala           |
-| sk   | Slovak            |
-| sl   | Slovenian         |
-| sm   | Samoan            |
-| sn   | Shona             |
-| so   | Somali            |
-| sq   | Albanian          |
-| sr   | Serbian           |
-| ss   | Swati             |
-| st   | Southern Sotho    |
-| su   | Sundanese         |
-| sv   | Swedish           |
-| sw   | Swahili           |
-| ta   | Tamil             |
-| te   | Telugu            |
-| tg   | Tajik             |
-| th   | Thai              |
-| ti   | Tigrinya          |
-| tk   | Turkmen           |
-| tl   | Tagalog           |
-| tn   | Tswana            |
-| tr   | Turkish           |
-| ts   | Tsonga            |
-| tt   | Tatar             |
-| ug   | Uyghur            |
-| uk   | Ukrainian         |
-| ur   | Urdu              |
-| uz   | Uzbek             |
-| ve   | Venda             |
-| vi   | Vietnamese        |
-| wo   | Wolof             |
-| xh   | Xhosa             |
-| yi   | Yiddish           |
-| yo   | Yoruba            |
-| zh   | Chinese           |
-| zu   | Zulu              |
+| Code | Language          | Code | Language          | Code | Language          |
+|------|-------------------|------|-------------------|------|-------------------|
+| aa   | Afar              | ho   | Hiri Motu         | om   | Oromo             |
+| ab   | Abkhaz            | hr   | Croatian          | or   | Odia              |  
+| ae   | Avestan           | ht   | Haitian Creole    | os   | Ossetian          |  
+| af   | Afrikaans         | hu   | Hungarian         | pa   | Punjabi           |  
+| ak   | Akan              | hy   | Armenian          | pi   | Pali              |  
+| am   | Amharic           | ia   | Interlingua       | pl   | Polish            |  
+| an   | Aragonese         | id   | Indonesian        | ps   | Pashto            |  
+| ar   | Arabic            | ie   | Interlingue       | pt   | Portuguese        |  
+| as   | Assamese          | ig   | Igbo              | qu   | Quechua           |  
+| av   | Avar              | ii   | Sichuan Yi        | rm   | Romansh           |  
+| ay   | Aymara            | ik   | Inupiaq           | ro   | Romanian          |  
+| az   | Azerbaijani       | is   | Icelandic         | ru   | Russian           |  
+| ba   | Bashkir           | it   | Italian           | rw   | Kinyarwanda       |  
+| be   | Belarusian        | iu   | Inuktitut         | sa   | Sanskrit          |  
+| bg   | Bulgarian         | ja   | Japanese          | sc   | Sardinian         |  
+| bi   | Bislama           | jv   | Javanese          | sd   | Sindhi            |  
+| bm   | Bambara           | ka   | Georgian          | se   | Northern Sami     |  
+| bn   | Bengali           | kg   | Kongo             | sg   | Sango             |  
+| bo   | Tibetan           | ki   | Kikuyu            | si   | Sinhala           |  
+| br   | Breton            | kj   | Kuanyama          | sk   | Slovak            |  
+| bs   | Bosnian           | kk   | Kazakh            | sl   | Slovenian         |  
+| ca   | Catalan           | km   | Khmer             | sm   | Samoan            |  
+| ce   | Chechen           | kn   | Kannada           | sn   | Shona             |  
+| ch   | Chamorro          | ko   | Korean            | so   | Somali            |  
+| co   | Corsican          | ku   | Kurdish           | sq   | Albanian          |  
+| cs   | Czech             | kv   | Komi              | sr   | Serbian           |  
+| cu   | Church Slavonic   | kw   | Cornish           | ss   | Swati             |  
+| cv   | Chuvash           | ky   | Kyrgyz            | st   | Southern Sotho    |  
+| cy   | Welsh             | la   | Latin             | su   | Sundanese         |  
+| da   | Danish            | lb   | Luxembourgish     | sv   | Swedish           |  
+| de   | German            | lg   | Luganda           | sw   | Swahili           |  
+| dv   | Divehi            | li   | Limburgish        | ta   | Tamil             |  
+| dz   | Dzongkha          | lo   | Lao               | te   | Telugu            |  
+| ee   | Ewe               | lt   | Lithuanian        | tg   | Tajik             |  
+| el   | Greek             | lu   | Luba-Katanga      | th   | Thai              |  
+| en   | English           | lv   | Latvian           | ti   | Tigrinya          |  
+| eo   | Esperanto         | mg   | Malagasy          | tk   | Turkmen           |  
+| es   | Spanish           | mi   | Māori             | tl   | Tagalog           |  
+| et   | Estonian          | mk   | Macedonian        | tn   | Tswana            |  
+| eu   | Basque            | ml   | Malayalam         | tr   | Turkish           |  
+| fa   | Persian           | mn   | Mongolian         | ts   | Tsonga            |  
+| ff   | Fula              | mr   | Marathi           | tt   | Tatar             |  
+| fi   | Finnish           | ms   | Malay             | ug   | Uyghur            |  
+| fj   | Fijian            | mt   | Maltese           | uk   | Ukrainian         |  
+| fo   | Faroese           | my   | Burmese           | ur   | Urdu              |  
+| fr   | French            | nb   | Norwegian Bokmål  | uz   | Uzbek             |  
+| fy   | Western Frisian   | nd   | Northern Ndebele  | ve   | Venda             |  
+| ga   | Irish             | ne   | Nepali            | vi   | Vietnamese        |  
+| gd   | Scottish Gaelic   | nl   | Dutch             | wa   | Walloon           |  
+| gl   | Galician          | nn   | Norwegian Nynorsk | wo   | Wolof             |  
+| gn   | Guarani           | no   | Norwegian         | xh   | Xhosa             |  
+| gu   | Gujarati          | nr   | Southern Ndebele  | yi   | Yiddish           |  
+| gv   | Manx              | nv   | Navajo            | yo   | Yoruba            |  
+| ha   | Hausa             | ny   | Chichewa          | zh   | Chinese           |  
+| he   | Hebrew            | oc   | Occitan           | zu   | Zulu              |  
+| hi   | Hindi             | oj   | Ojibwe            |      |                   |
 
 ## License
 

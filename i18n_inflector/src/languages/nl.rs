@@ -1,4 +1,6 @@
 //! Dutch (nl) inflection rules.
+//!
+//! Also used for Limburgish (li).
 
 use alloc::borrow::Cow;
 use alloc::format;

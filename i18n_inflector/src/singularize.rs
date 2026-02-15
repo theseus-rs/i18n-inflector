@@ -3,8 +3,182 @@
 use alloc::borrow::Cow;
 use alloc::format;
 
+use phf::phf_map;
+
 use crate::error::{Error, Result};
 use crate::languages;
+
+type SingularizeFn = for<'a> fn(&'a str) -> Cow<'a, str>;
+
+static SINGULARIZE_MAP: phf::Map<&'static str, SingularizeFn> = phf_map! {
+    "aa" => languages::aa::singularize,
+    "ab" => languages::ab::singularize,
+    "ae" => languages::ae::singularize,
+    "af" => languages::af::singularize,
+    "ak" => languages::ak::singularize,
+    "am" => languages::am::singularize,
+    "an" => languages::an::singularize,
+    "ar" => languages::ar::singularize,
+    "as" => languages::r#as::singularize,
+    "av" => languages::av::singularize,
+    "ay" => languages::ay::singularize,
+    "az" => languages::az::singularize,
+    "ba" => languages::ba::singularize,
+    "be" => languages::be::singularize,
+    "bg" => languages::bg::singularize,
+    "bi" => languages::bi::singularize,
+    "bm" => languages::bm::singularize,
+    "bn" => languages::bn::singularize,
+    "bo" => languages::bo::singularize,
+    "br" => languages::br::singularize,
+    "bs" => languages::bs::singularize,
+    "ca" => languages::ca::singularize,
+    "ce" => languages::ce::singularize,
+    "ch" => languages::ch::singularize,
+    "co" => languages::co::singularize,
+    "cs" => languages::cs::singularize,
+    "cu" => languages::cu::singularize,
+    "cv" => languages::cv::singularize,
+    "cy" => languages::cy::singularize,
+    "da" => languages::da::singularize,
+    "de" => languages::de::singularize,
+    "dv" => languages::dv::singularize,
+    "dz" => languages::dz::singularize,
+    "ee" => languages::ee::singularize,
+    "el" => languages::el::singularize,
+    "en" => languages::en::singularize,
+    "eo" => languages::eo::singularize,
+    "es" => languages::es::singularize,
+    "et" => languages::et::singularize,
+    "eu" => languages::eu::singularize,
+    "fa" => languages::fa::singularize,
+    "ff" => languages::ff::singularize,
+    "fi" => languages::fi::singularize,
+    "fj" => languages::fj::singularize,
+    "fo" => languages::fo::singularize,
+    "fr" => languages::fr::singularize,
+    "fy" => languages::fy::singularize,
+    "ga" => languages::ga::singularize,
+    "gd" => languages::gd::singularize,
+    "gl" => languages::gl::singularize,
+    "gn" => languages::gn::singularize,
+    "gu" => languages::gu::singularize,
+    "gv" => languages::gv::singularize,
+    "ha" => languages::ha::singularize,
+    "he" => languages::he::singularize,
+    "hi" => languages::hi::singularize,
+    "ho" => languages::ho::singularize,
+    "hr" => languages::hr::singularize,
+    "ht" => languages::ht::singularize,
+    "hu" => languages::hu::singularize,
+    "hy" => languages::hy::singularize,
+    "ia" => languages::ia::singularize,
+    "id" => languages::id::singularize,
+    "ie" => languages::ie::singularize,
+    "ig" => languages::ig::singularize,
+    "ii" => languages::ii::singularize,
+    "ik" => languages::ik::singularize,
+    "is" => languages::is::singularize,
+    "it" => languages::it::singularize,
+    "iu" => languages::iu::singularize,
+    "ja" => languages::ja::singularize,
+    "jv" => languages::jv::singularize,
+    "ka" => languages::ka::singularize,
+    "kg" => languages::kg::singularize,
+    "ki" => languages::ki::singularize,
+    "kj" => languages::kj::singularize,
+    "kk" => languages::kk::singularize,
+    "km" => languages::km::singularize,
+    "kn" => languages::kn::singularize,
+    "ko" => languages::ko::singularize,
+    "ku" => languages::ku::singularize,
+    "kv" => languages::kv::singularize,
+    "kw" => languages::kw::singularize,
+    "ky" => languages::ky::singularize,
+    "la" => languages::la::singularize,
+    "lb" => languages::lb::singularize,
+    "lg" => languages::lg::singularize,
+    "li" => languages::li::singularize,
+    "lo" => languages::lo::singularize,
+    "lt" => languages::lt::singularize,
+    "lu" => languages::lu::singularize,
+    "lv" => languages::lv::singularize,
+    "mg" => languages::mg::singularize,
+    "mi" => languages::mi::singularize,
+    "mk" => languages::mk::singularize,
+    "ml" => languages::ml::singularize,
+    "mn" => languages::mn::singularize,
+    "mr" => languages::mr::singularize,
+    "ms" => languages::ms::singularize,
+    "mt" => languages::mt::singularize,
+    "my" => languages::my::singularize,
+    "nb" => languages::nb::singularize,
+    "nd" => languages::nd::singularize,
+    "ne" => languages::ne::singularize,
+    "nl" => languages::nl::singularize,
+    "nn" => languages::nn::singularize,
+    "no" => languages::no::singularize,
+    "nr" => languages::nr::singularize,
+    "nv" => languages::nv::singularize,
+    "ny" => languages::ny::singularize,
+    "oc" => languages::oc::singularize,
+    "oj" => languages::oj::singularize,
+    "om" => languages::om::singularize,
+    "or" => languages::or::singularize,
+    "os" => languages::os::singularize,
+    "pa" => languages::pa::singularize,
+    "pi" => languages::pi::singularize,
+    "pl" => languages::pl::singularize,
+    "ps" => languages::ps::singularize,
+    "pt" => languages::pt::singularize,
+    "qu" => languages::qu::singularize,
+    "rm" => languages::rm::singularize,
+    "ro" => languages::ro::singularize,
+    "ru" => languages::ru::singularize,
+    "rw" => languages::rw::singularize,
+    "sa" => languages::sa::singularize,
+    "sc" => languages::sc::singularize,
+    "sd" => languages::sd::singularize,
+    "se" => languages::se::singularize,
+    "sg" => languages::sg::singularize,
+    "si" => languages::si::singularize,
+    "sk" => languages::sk::singularize,
+    "sl" => languages::sl::singularize,
+    "sm" => languages::sm::singularize,
+    "sn" => languages::sn::singularize,
+    "so" => languages::so::singularize,
+    "sq" => languages::sq::singularize,
+    "sr" => languages::sr::singularize,
+    "ss" => languages::ss::singularize,
+    "st" => languages::st::singularize,
+    "su" => languages::su::singularize,
+    "sv" => languages::sv::singularize,
+    "sw" => languages::sw::singularize,
+    "ta" => languages::ta::singularize,
+    "te" => languages::te::singularize,
+    "tg" => languages::tg::singularize,
+    "th" => languages::th::singularize,
+    "ti" => languages::ti::singularize,
+    "tk" => languages::tk::singularize,
+    "tl" => languages::tl::singularize,
+    "tn" => languages::tn::singularize,
+    "tr" => languages::tr::singularize,
+    "ts" => languages::ts::singularize,
+    "tt" => languages::tt::singularize,
+    "ug" => languages::ug::singularize,
+    "uk" => languages::uk::singularize,
+    "ur" => languages::ur::singularize,
+    "uz" => languages::uz::singularize,
+    "ve" => languages::ve::singularize,
+    "vi" => languages::vi::singularize,
+    "wa" => languages::wa::singularize,
+    "wo" => languages::wo::singularize,
+    "xh" => languages::xh::singularize,
+    "yi" => languages::yi::singularize,
+    "yo" => languages::yo::singularize,
+    "zh" => languages::zh::singularize,
+    "zu" => languages::zu::singularize,
+};
 
 /// Converts a potentially plural word to its singular form based on the given locale.
 ///
@@ -37,136 +211,11 @@ use crate::languages;
 /// // Unsupported locale returns an error
 /// assert!(singularize("xx", "users").is_err());
 /// ```
-#[expect(clippy::too_many_lines)]
 pub fn singularize<'a>(locale: &str, name: &'a str) -> Result<Cow<'a, str>> {
-    match locale {
-        "af" => Ok(languages::af::singularize(name)),
-        "am" => Ok(languages::am::singularize(name)),
-        "an" => Ok(languages::an::singularize(name)),
-        "ar" => Ok(languages::ar::singularize(name)),
-        "as" => Ok(languages::r#as::singularize(name)),
-        "az" => Ok(languages::az::singularize(name)),
-        "be" => Ok(languages::be::singularize(name)),
-        "bg" => Ok(languages::bg::singularize(name)),
-        "bn" => Ok(languages::bn::singularize(name)),
-        "bo" => Ok(languages::bo::singularize(name)),
-        "br" => Ok(languages::br::singularize(name)),
-        "bs" => Ok(languages::bs::singularize(name)),
-        "ca" => Ok(languages::ca::singularize(name)),
-        "co" => Ok(languages::co::singularize(name)),
-        "cs" => Ok(languages::cs::singularize(name)),
-        "cy" => Ok(languages::cy::singularize(name)),
-        "da" => Ok(languages::da::singularize(name)),
-        "de" => Ok(languages::de::singularize(name)),
-        "el" => Ok(languages::el::singularize(name)),
-        "en" => Ok(languages::en::singularize(name)),
-        "eo" => Ok(languages::eo::singularize(name)),
-        "es" => Ok(languages::es::singularize(name)),
-        "et" => Ok(languages::et::singularize(name)),
-        "eu" => Ok(languages::eu::singularize(name)),
-        "fa" => Ok(languages::fa::singularize(name)),
-        "fi" => Ok(languages::fi::singularize(name)),
-        "fo" => Ok(languages::fo::singularize(name)),
-        "fr" => Ok(languages::fr::singularize(name)),
-        "fy" => Ok(languages::fy::singularize(name)),
-        "ga" => Ok(languages::ga::singularize(name)),
-        "gd" => Ok(languages::gd::singularize(name)),
-        "gl" => Ok(languages::gl::singularize(name)),
-        "gu" => Ok(languages::gu::singularize(name)),
-        "gv" => Ok(languages::gv::singularize(name)),
-        "ha" => Ok(languages::ha::singularize(name)),
-        "he" => Ok(languages::he::singularize(name)),
-        "hi" => Ok(languages::hi::singularize(name)),
-        "hr" => Ok(languages::hr::singularize(name)),
-        "ht" => Ok(languages::ht::singularize(name)),
-        "hu" => Ok(languages::hu::singularize(name)),
-        "hy" => Ok(languages::hy::singularize(name)),
-        "id" => Ok(languages::id::singularize(name)),
-        "ig" => Ok(languages::ig::singularize(name)),
-        "is" => Ok(languages::is::singularize(name)),
-        "it" => Ok(languages::it::singularize(name)),
-        "ja" => Ok(languages::ja::singularize(name)),
-        "jv" => Ok(languages::jv::singularize(name)),
-        "ka" => Ok(languages::ka::singularize(name)),
-        "kk" => Ok(languages::kk::singularize(name)),
-        "km" => Ok(languages::km::singularize(name)),
-        "kn" => Ok(languages::kn::singularize(name)),
-        "ko" => Ok(languages::ko::singularize(name)),
-        "ku" => Ok(languages::ku::singularize(name)),
-        "kw" => Ok(languages::kw::singularize(name)),
-        "ky" => Ok(languages::ky::singularize(name)),
-        "la" => Ok(languages::la::singularize(name)),
-        "lb" => Ok(languages::lb::singularize(name)),
-        "lo" => Ok(languages::lo::singularize(name)),
-        "lt" => Ok(languages::lt::singularize(name)),
-        "lv" => Ok(languages::lv::singularize(name)),
-        "mg" => Ok(languages::mg::singularize(name)),
-        "mi" => Ok(languages::mi::singularize(name)),
-        "mk" => Ok(languages::mk::singularize(name)),
-        "ml" => Ok(languages::ml::singularize(name)),
-        "mn" => Ok(languages::mn::singularize(name)),
-        "mr" => Ok(languages::mr::singularize(name)),
-        "ms" => Ok(languages::ms::singularize(name)),
-        "mt" => Ok(languages::mt::singularize(name)),
-        "my" => Ok(languages::my::singularize(name)),
-        "nb" => Ok(languages::nb::singularize(name)),
-        "nd" => Ok(languages::nd::singularize(name)),
-        "ne" => Ok(languages::ne::singularize(name)),
-        "nl" => Ok(languages::nl::singularize(name)),
-        "nn" => Ok(languages::nn::singularize(name)),
-        "no" => Ok(languages::no::singularize(name)),
-        "nr" => Ok(languages::nr::singularize(name)),
-        "oc" => Ok(languages::oc::singularize(name)),
-        "or" => Ok(languages::or::singularize(name)),
-        "pa" => Ok(languages::pa::singularize(name)),
-        "pl" => Ok(languages::pl::singularize(name)),
-        "ps" => Ok(languages::ps::singularize(name)),
-        "pt" => Ok(languages::pt::singularize(name)),
-        "qu" => Ok(languages::qu::singularize(name)),
-        "rm" => Ok(languages::rm::singularize(name)),
-        "ro" => Ok(languages::ro::singularize(name)),
-        "ru" => Ok(languages::ru::singularize(name)),
-        "rw" => Ok(languages::rw::singularize(name)),
-        "sc" => Ok(languages::sc::singularize(name)),
-        "sd" => Ok(languages::sd::singularize(name)),
-        "si" => Ok(languages::si::singularize(name)),
-        "sk" => Ok(languages::sk::singularize(name)),
-        "sl" => Ok(languages::sl::singularize(name)),
-        "sm" => Ok(languages::sm::singularize(name)),
-        "sn" => Ok(languages::sn::singularize(name)),
-        "so" => Ok(languages::so::singularize(name)),
-        "sq" => Ok(languages::sq::singularize(name)),
-        "sr" => Ok(languages::sr::singularize(name)),
-        "ss" => Ok(languages::ss::singularize(name)),
-        "st" => Ok(languages::st::singularize(name)),
-        "su" => Ok(languages::su::singularize(name)),
-        "sv" => Ok(languages::sv::singularize(name)),
-        "sw" => Ok(languages::sw::singularize(name)),
-        "ta" => Ok(languages::ta::singularize(name)),
-        "te" => Ok(languages::te::singularize(name)),
-        "tg" => Ok(languages::tg::singularize(name)),
-        "th" => Ok(languages::th::singularize(name)),
-        "ti" => Ok(languages::ti::singularize(name)),
-        "tk" => Ok(languages::tk::singularize(name)),
-        "tl" => Ok(languages::tl::singularize(name)),
-        "tn" => Ok(languages::tn::singularize(name)),
-        "tr" => Ok(languages::tr::singularize(name)),
-        "ts" => Ok(languages::ts::singularize(name)),
-        "tt" => Ok(languages::tt::singularize(name)),
-        "ug" => Ok(languages::ug::singularize(name)),
-        "uk" => Ok(languages::uk::singularize(name)),
-        "ur" => Ok(languages::ur::singularize(name)),
-        "uz" => Ok(languages::uz::singularize(name)),
-        "ve" => Ok(languages::ve::singularize(name)),
-        "vi" => Ok(languages::vi::singularize(name)),
-        "wo" => Ok(languages::wo::singularize(name)),
-        "xh" => Ok(languages::xh::singularize(name)),
-        "yi" => Ok(languages::yi::singularize(name)),
-        "yo" => Ok(languages::yo::singularize(name)),
-        "zh" => Ok(languages::zh::singularize(name)),
-        "zu" => Ok(languages::zu::singularize(name)),
-        _ => Err(Error::new(format!("unsupported locale: {locale}"))),
-    }
+    SINGULARIZE_MAP
+        .get(locale)
+        .map(|f| f(name))
+        .ok_or_else(|| Error::new(format!("unsupported locale: {locale}")))
 }
 
 #[cfg(test)]
@@ -175,8 +224,28 @@ mod tests {
     use alloc::string::ToString;
 
     #[test]
+    fn test_aa() {
+        assert_eq!(singularize("aa", "user").unwrap(), "user");
+    }
+
+    #[test]
+    fn test_ab() {
+        assert_eq!(singularize("ab", "user").unwrap(), "user");
+    }
+
+    #[test]
+    fn test_ae() {
+        assert_eq!(singularize("ae", "user").unwrap(), "user");
+    }
+
+    #[test]
     fn test_af() {
         assert_eq!(singularize("af", "honde").unwrap(), "hond");
+    }
+
+    #[test]
+    fn test_ak() {
+        assert_eq!(singularize("ak", "user").unwrap(), "user");
     }
 
     #[test]
@@ -200,8 +269,23 @@ mod tests {
     }
 
     #[test]
+    fn test_av() {
+        assert_eq!(singularize("av", "user").unwrap(), "user");
+    }
+
+    #[test]
+    fn test_ay() {
+        assert_eq!(singularize("ay", "utanaka").unwrap(), "uta");
+    }
+
+    #[test]
     fn test_az() {
         assert_eq!(singularize("az", "kullanicilar").unwrap(), "kullanici");
+    }
+
+    #[test]
+    fn test_ba() {
+        assert_eq!(singularize("ba", "kullanicilar").unwrap(), "kullanici");
     }
 
     #[test]
@@ -212,6 +296,16 @@ mod tests {
     #[test]
     fn test_bg() {
         assert_eq!(singularize("bg", "produkti").unwrap(), "produkt");
+    }
+
+    #[test]
+    fn test_bi() {
+        assert_eq!(singularize("bi", "user").unwrap(), "user");
+    }
+
+    #[test]
+    fn test_bm() {
+        assert_eq!(singularize("bm", "user").unwrap(), "user");
     }
 
     #[test]
@@ -240,6 +334,16 @@ mod tests {
     }
 
     #[test]
+    fn test_ce() {
+        assert_eq!(singularize("ce", "user").unwrap(), "user");
+    }
+
+    #[test]
+    fn test_ch() {
+        assert_eq!(singularize("ch", "user").unwrap(), "user");
+    }
+
+    #[test]
     fn test_co() {
         assert_eq!(singularize("co", "prodotti").unwrap(), "prodotto");
     }
@@ -247,6 +351,16 @@ mod tests {
     #[test]
     fn test_cs() {
         assert_eq!(singularize("cs", "produkty").unwrap(), "produkt");
+    }
+
+    #[test]
+    fn test_cu() {
+        assert_eq!(singularize("cu", "user").unwrap(), "user");
+    }
+
+    #[test]
+    fn test_cv() {
+        assert_eq!(singularize("cv", "kullanicilar").unwrap(), "kullanici");
     }
 
     #[test]
@@ -262,6 +376,21 @@ mod tests {
     #[test]
     fn test_de() {
         assert_eq!(singularize("de", "produkte").unwrap(), "produkt");
+    }
+
+    #[test]
+    fn test_dv() {
+        assert_eq!(singularize("dv", "upyogakartaon").unwrap(), "upyogakarta");
+    }
+
+    #[test]
+    fn test_dz() {
+        assert_eq!(singularize("dz", "user").unwrap(), "user");
+    }
+
+    #[test]
+    fn test_ee() {
+        assert_eq!(singularize("ee", "user").unwrap(), "user");
     }
 
     #[test]
@@ -300,8 +429,18 @@ mod tests {
     }
 
     #[test]
+    fn test_ff() {
+        assert_eq!(singularize("ff", "user").unwrap(), "user");
+    }
+
+    #[test]
     fn test_fi() {
         assert_eq!(singularize("fi", "tuotteet").unwrap(), "tuottee");
+    }
+
+    #[test]
+    fn test_fj() {
+        assert_eq!(singularize("fj", "user").unwrap(), "user");
     }
 
     #[test]
@@ -335,6 +474,11 @@ mod tests {
     }
 
     #[test]
+    fn test_gn() {
+        assert_eq!(singularize("gn", "mitãkuéra").unwrap(), "mitã");
+    }
+
+    #[test]
     fn test_gu() {
         assert_eq!(singularize("gu", "chokrao").unwrap(), "chokra");
     }
@@ -360,6 +504,11 @@ mod tests {
     }
 
     #[test]
+    fn test_ho() {
+        assert_eq!(singularize("ho", "user").unwrap(), "user");
+    }
+
+    #[test]
     fn test_hr() {
         assert_eq!(singularize("hr", "korisnici").unwrap(), "korisnik");
     }
@@ -380,13 +529,33 @@ mod tests {
     }
 
     #[test]
+    fn test_ia() {
+        assert_eq!(singularize("ia", "utilisateurs").unwrap(), "utilisateur");
+    }
+
+    #[test]
     fn test_id() {
         assert_eq!(singularize("id", "user").unwrap(), "user");
     }
 
     #[test]
+    fn test_ie() {
+        assert_eq!(singularize("ie", "utilisateurs").unwrap(), "utilisateur");
+    }
+
+    #[test]
     fn test_ig() {
         assert_eq!(singularize("ig", "user").unwrap(), "user");
+    }
+
+    #[test]
+    fn test_ii() {
+        assert_eq!(singularize("ii", "user").unwrap(), "user");
+    }
+
+    #[test]
+    fn test_ik() {
+        assert_eq!(singularize("ik", "user").unwrap(), "user");
     }
 
     #[test]
@@ -397,6 +566,11 @@ mod tests {
     #[test]
     fn test_it() {
         assert_eq!(singularize("it", "prodotti").unwrap(), "prodotto");
+    }
+
+    #[test]
+    fn test_iu() {
+        assert_eq!(singularize("iu", "user").unwrap(), "user");
     }
 
     #[test]
@@ -412,6 +586,21 @@ mod tests {
     #[test]
     fn test_ka() {
         assert_eq!(singularize("ka", "user").unwrap(), "user");
+    }
+
+    #[test]
+    fn test_kg() {
+        assert_eq!(singularize("kg", "vitabuni").unwrap(), "vitabu");
+    }
+
+    #[test]
+    fn test_ki() {
+        assert_eq!(singularize("ki", "vitabuni").unwrap(), "vitabu");
+    }
+
+    #[test]
+    fn test_kj() {
+        assert_eq!(singularize("kj", "vitabuni").unwrap(), "vitabu");
     }
 
     #[test]
@@ -440,6 +629,11 @@ mod tests {
     }
 
     #[test]
+    fn test_kv() {
+        assert_eq!(singularize("kv", "user").unwrap(), "user");
+    }
+
+    #[test]
     fn test_kw() {
         assert_eq!(singularize("kw", "cathod").unwrap(), "cath");
     }
@@ -460,6 +654,16 @@ mod tests {
     }
 
     #[test]
+    fn test_lg() {
+        assert_eq!(singularize("lg", "vitabuni").unwrap(), "vitabu");
+    }
+
+    #[test]
+    fn test_li() {
+        assert_eq!(singularize("li", "klanten").unwrap(), "klant");
+    }
+
+    #[test]
     fn test_lo() {
         assert_eq!(singularize("lo", "user").unwrap(), "user");
     }
@@ -467,6 +671,11 @@ mod tests {
     #[test]
     fn test_lt() {
         assert_eq!(singularize("lt", "vartotojai").unwrap(), "vartotojas");
+    }
+
+    #[test]
+    fn test_lu() {
+        assert_eq!(singularize("lu", "vitabuni").unwrap(), "vitabu");
     }
 
     #[test]
@@ -555,8 +764,28 @@ mod tests {
     }
 
     #[test]
+    fn test_nv() {
+        assert_eq!(singularize("nv", "user").unwrap(), "user");
+    }
+
+    #[test]
+    fn test_ny() {
+        assert_eq!(singularize("ny", "vitabuni").unwrap(), "vitabu");
+    }
+
+    #[test]
     fn test_oc() {
         assert_eq!(singularize("oc", "utilisateurs").unwrap(), "utilisateur");
+    }
+
+    #[test]
+    fn test_oj() {
+        assert_eq!(singularize("oj", "user").unwrap(), "user");
+    }
+
+    #[test]
+    fn test_om() {
+        assert_eq!(singularize("om", "buugaagyo").unwrap(), "buugaag");
     }
 
     #[test]
@@ -565,8 +794,18 @@ mod tests {
     }
 
     #[test]
+    fn test_os() {
+        assert_eq!(singularize("os", "ketabha").unwrap(), "ketab");
+    }
+
+    #[test]
     fn test_pa() {
         assert_eq!(singularize("pa", "upyogakartaon").unwrap(), "upyogakarta");
+    }
+
+    #[test]
+    fn test_pi() {
+        assert_eq!(singularize("pi", "user").unwrap(), "user");
     }
 
     #[test]
@@ -610,6 +849,11 @@ mod tests {
     }
 
     #[test]
+    fn test_sa() {
+        assert_eq!(singularize("sa", "user").unwrap(), "user");
+    }
+
+    #[test]
     fn test_sc() {
         assert_eq!(singularize("sc", "prodotti").unwrap(), "prodotto");
     }
@@ -617,6 +861,16 @@ mod tests {
     #[test]
     fn test_sd() {
         assert_eq!(singularize("sd", "upyogakartaon").unwrap(), "upyogakarta");
+    }
+
+    #[test]
+    fn test_se() {
+        assert_eq!(singularize("se", "user").unwrap(), "user");
+    }
+
+    #[test]
+    fn test_sg() {
+        assert_eq!(singularize("sg", "user").unwrap(), "user");
     }
 
     #[test]
@@ -767,6 +1021,11 @@ mod tests {
     #[test]
     fn test_vi() {
         assert_eq!(singularize("vi", "user").unwrap(), "user");
+    }
+
+    #[test]
+    fn test_wa() {
+        assert_eq!(singularize("wa", "utilisateurs").unwrap(), "utilisateur");
     }
 
     #[test]

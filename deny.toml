@@ -17,6 +17,7 @@ targets = [
 allow = [
     "Apache-2.0",
     "MIT",
+    "Unicode-3.0",
 ]
 
 # https://embarkstudios.github.io/cargo-deny/checks/bans/cfg.html

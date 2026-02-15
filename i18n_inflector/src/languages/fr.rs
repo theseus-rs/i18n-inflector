@@ -1,4 +1,7 @@
 //! French (fr) inflection rules.
+//!
+//! Also used for Interlingua (ia), Interlingue (ie), Occitan (oc), Romansh (rm), and
+//! Walloon (wa).
 
 use alloc::borrow::Cow;
 use alloc::format;
