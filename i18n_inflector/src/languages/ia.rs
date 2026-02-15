@@ -1,5 +1,11 @@
 //! Interlingua (ia) inflection rules.
-//!
-//! Uses the same rules as French. See [`super::fr`] for the implementation.
+
+use crate::language_rules::LanguageRuleSet;
 
 pub(crate) use super::fr::{pluralize, singularize};
+
+pub(crate) static RULES: LanguageRuleSet = LanguageRuleSet {
+    language: "ia",
+    singularize_fn: singularize,
+    pluralize_fn: pluralize,
+};

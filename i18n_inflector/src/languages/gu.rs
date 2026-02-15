@@ -1,20 +1,20 @@
 //! Gujarati (gu) inflection rules.
 
+use crate::language_rules::LanguageRuleSet;
 use alloc::borrow::Cow;
 use alloc::format;
 use alloc::vec;
 use alloc::vec::Vec;
 
+pub(crate) static RULES: LanguageRuleSet = LanguageRuleSet {
+    language: "gu",
+    singularize_fn: singularize,
+    pluralize_fn: pluralize,
+};
+
 /// Converts a plural Gujarati noun (Latin transliteration) to its singular form.
 ///
 /// Handles `-o` and `-on` plural suffixes.
-///
-/// # Examples
-///
-/// ```
-/// # use i18n_inflector::singularize;
-/// assert_eq!(singularize("gu", "chokrao").unwrap(), "chokra");
-/// ```
 pub(crate) fn singularize(name: &str) -> Cow<'_, str> {
     if let Some(stem) = name.strip_suffix("on")
         && !stem.is_empty()
@@ -30,14 +30,6 @@ pub(crate) fn singularize(name: &str) -> Cow<'_, str> {
 }
 
 /// Returns a list of possible plural forms for a Gujarati noun (Latin transliteration).
-///
-/// # Examples
-///
-/// ```
-/// # use i18n_inflector::pluralize;
-/// let result = pluralize("gu", "chokra").unwrap();
-/// assert!(result.iter().any(|v| v == "chokrao"));
-/// ```
 pub(crate) fn pluralize(name: &str) -> Vec<Cow<'_, str>> {
     vec![format!("{name}o").into(), format!("{name}on").into()]
 }

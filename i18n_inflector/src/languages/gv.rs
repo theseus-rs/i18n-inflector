@@ -1,5 +1,11 @@
 //! Manx (gv) inflection rules.
-//!
-//! Uses the same rules as Irish. See [`super::ga`] for the implementation.
+
+use crate::language_rules::LanguageRuleSet;
 
 pub(crate) use super::ga::{pluralize, singularize};
+
+pub(crate) static RULES: LanguageRuleSet = LanguageRuleSet {
+    language: "gv",
+    singularize_fn: singularize,
+    pluralize_fn: pluralize,
+};

@@ -1,5 +1,11 @@
 //! Belarusian (be) inflection rules.
-//!
-//! Uses the same rules as Ukrainian. See [`super::uk`] for the implementation.
+
+use crate::language_rules::LanguageRuleSet;
 
 pub(crate) use super::uk::{pluralize, singularize};
+
+pub(crate) static RULES: LanguageRuleSet = LanguageRuleSet {
+    language: "be",
+    singularize_fn: singularize,
+    pluralize_fn: pluralize,
+};

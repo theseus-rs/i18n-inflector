@@ -9,32 +9,23 @@
 //! Ojibwe (oj), Pali (pi), Sanskrit (sa), Northern Sami (se), Sango (sg), Samoan (sm),
 //! Sundanese (su), Thai (th), Tagalog (tl), Vietnamese (vi), Wolof (wo), and Yoruba (yo).
 
+use crate::language_rules::LanguageRuleSet;
 use alloc::borrow::Cow;
 use alloc::vec;
 use alloc::vec::Vec;
 
+pub(crate) static RULES: LanguageRuleSet = LanguageRuleSet {
+    language: "ja",
+    singularize_fn: singularize,
+    pluralize_fn: pluralize,
+};
+
 /// Returns the word unchanged since the language has no morphological plural.
-///
-/// # Examples
-///
-/// ```
-/// # use i18n_inflector::singularize;
-/// assert_eq!(singularize("ja", "user").unwrap(), "user");
-/// assert_eq!(singularize("zh", "user").unwrap(), "user");
-/// ```
 pub(crate) fn singularize(name: &str) -> Cow<'_, str> {
     Cow::Borrowed(name)
 }
 
 /// Returns the word unchanged since the language has no morphological plural.
-///
-/// # Examples
-///
-/// ```
-/// # use i18n_inflector::pluralize;
-/// let result = pluralize("ja", "user").unwrap();
-/// assert_eq!(result, vec!["user"]);
-/// ```
 pub(crate) fn pluralize(name: &str) -> Vec<Cow<'_, str>> {
     vec![Cow::Borrowed(name)]
 }

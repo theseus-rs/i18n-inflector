@@ -1,5 +1,11 @@
-//! Kuanyama (kj) inflection rules.
-//!
-//! Uses the same rules as Swahili. See [`super::sw`] for the implementation.
+//! Kikuyu (ki) inflection rules.
+
+use crate::language_rules::LanguageRuleSet;
 
 pub(crate) use super::sw::{pluralize, singularize};
+
+pub(crate) static RULES: LanguageRuleSet = LanguageRuleSet {
+    language: "kj",
+    singularize_fn: singularize,
+    pluralize_fn: pluralize,
+};

@@ -1,5 +1,11 @@
 //! Slovenian (sl) inflection rules.
-//!
-//! Uses the same rules as Croatian. See [`super::hr`] for the implementation.
+
+use crate::language_rules::LanguageRuleSet;
 
 pub(crate) use super::hr::{pluralize, singularize};
+
+pub(crate) static RULES: LanguageRuleSet = LanguageRuleSet {
+    language: "sl",
+    singularize_fn: singularize,
+    pluralize_fn: pluralize,
+};

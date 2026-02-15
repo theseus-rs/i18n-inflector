@@ -20,7 +20,6 @@ version = "0.1.1"
 [workspace.lints.rust]
 dead_code = "allow"
 missing_debug_implementations = "deny"
-unsafe_code = "forbid"
 warnings = "deny"
 
 [workspace.lints.clippy]

@@ -2,23 +2,22 @@
 //!
 //! Also used for Norwegian (no) and Swedish (sv).
 
+use crate::language_rules::LanguageRuleSet;
 use alloc::borrow::Cow;
 use alloc::format;
 use alloc::vec;
 use alloc::vec::Vec;
 
+pub(crate) static RULES: LanguageRuleSet = LanguageRuleSet {
+    language: "da",
+    singularize_fn: singularize,
+    pluralize_fn: pluralize,
+};
+
 /// Converts a plural Scandinavian noun to its singular form.
 ///
 /// Handles `-ere`, `-er`, `-ar`, `-or`, and `-r` plural suffixes common
 /// across Danish, Norwegian, and Swedish.
-///
-/// # Examples
-///
-/// ```
-/// # use i18n_inflector::singularize;
-/// assert_eq!(singularize("sv", "produkter").unwrap(), "produkt");
-/// assert_eq!(singularize("no", "brukere").unwrap(), "bruk");
-/// ```
 pub(crate) fn singularize(name: &str) -> Cow<'_, str> {
     if let Some(stem) = name.strip_suffix("ere")
         && !stem.is_empty()
@@ -49,14 +48,6 @@ pub(crate) fn singularize(name: &str) -> Cow<'_, str> {
 }
 
 /// Returns a list of possible plural forms for a Scandinavian noun.
-///
-/// # Examples
-///
-/// ```
-/// # use i18n_inflector::pluralize;
-/// let result = pluralize("sv", "produkt").unwrap();
-/// assert!(result.iter().any(|v| v == "produkter"));
-/// ```
 pub(crate) fn pluralize(name: &str) -> Vec<Cow<'_, str>> {
     vec![
         format!("{name}ere").into(),

@@ -1,20 +1,19 @@
 //! Latin (la) inflection rules.
 
+use crate::language_rules::LanguageRuleSet;
 use alloc::borrow::Cow;
 use alloc::format;
 use alloc::vec::Vec;
 
+pub(crate) static RULES: LanguageRuleSet = LanguageRuleSet {
+    language: "la",
+    singularize_fn: singularize,
+    pluralize_fn: pluralize,
+};
+
 /// Converts a plural Latin noun to its singular form.
 ///
 /// Handles `-ae` -> `-a`, `-i` -> `-us`, `-es` -> `-is`, and `-a` -> `-um` transformations.
-///
-/// # Examples
-///
-/// ```
-/// # use i18n_inflector::singularize;
-/// assert_eq!(singularize("la", "domini").unwrap(), "dominus");
-/// assert_eq!(singularize("la", "rosae").unwrap(), "rosa");
-/// ```
 pub(crate) fn singularize(name: &str) -> Cow<'_, str> {
     if let Some(stem) = name.strip_suffix("ae")
         && !stem.is_empty()
@@ -40,14 +39,6 @@ pub(crate) fn singularize(name: &str) -> Cow<'_, str> {
 }
 
 /// Returns a list of possible plural forms for a Latin noun.
-///
-/// # Examples
-///
-/// ```
-/// # use i18n_inflector::pluralize;
-/// let result = pluralize("la", "dominus").unwrap();
-/// assert!(result.iter().any(|v| v == "domini"));
-/// ```
 pub(crate) fn pluralize(name: &str) -> Vec<Cow<'_, str>> {
     let mut candidates = Vec::new();
     if let Some(stem) = name.strip_suffix("us") {

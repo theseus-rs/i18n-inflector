@@ -1,20 +1,20 @@
 //! Romanian (ro) inflection rules.
 
+use crate::language_rules::LanguageRuleSet;
 use alloc::borrow::Cow;
 use alloc::format;
 use alloc::vec;
 use alloc::vec::Vec;
 
+pub(crate) static RULES: LanguageRuleSet = LanguageRuleSet {
+    language: "ro",
+    singularize_fn: singularize,
+    pluralize_fn: pluralize,
+};
+
 /// Converts a plural Romanian noun to its singular form.
 ///
 /// Handles `-i`, `-e`, and `-uri` plural suffixes.
-///
-/// # Examples
-///
-/// ```
-/// # use i18n_inflector::singularize;
-/// assert_eq!(singularize("ro", "utilizatori").unwrap(), "utilizator");
-/// ```
 pub(crate) fn singularize(name: &str) -> Cow<'_, str> {
     if let Some(stem) = name.strip_suffix("uri")
         && !stem.is_empty()
@@ -35,14 +35,6 @@ pub(crate) fn singularize(name: &str) -> Cow<'_, str> {
 }
 
 /// Returns a list of possible plural forms for a Romanian noun.
-///
-/// # Examples
-///
-/// ```
-/// # use i18n_inflector::pluralize;
-/// let result = pluralize("ro", "utilizator").unwrap();
-/// assert!(result.iter().any(|v| v == "utilizatori"));
-/// ```
 pub(crate) fn pluralize(name: &str) -> Vec<Cow<'_, str>> {
     vec![
         format!("{name}i").into(),

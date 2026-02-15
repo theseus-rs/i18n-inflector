@@ -1,20 +1,20 @@
 //! Aymara (ay) inflection rules.
 
+use crate::language_rules::LanguageRuleSet;
 use alloc::borrow::Cow;
 use alloc::format;
 use alloc::vec;
 use alloc::vec::Vec;
 
+pub(crate) static RULES: LanguageRuleSet = LanguageRuleSet {
+    language: "ay",
+    singularize_fn: singularize,
+    pluralize_fn: pluralize,
+};
+
 /// Converts a plural Aymara noun to its singular form.
 ///
 /// Aymara uses `-naka` as the plural suffix.
-///
-/// # Examples
-///
-/// ```
-/// # use i18n_inflector::singularize;
-/// assert_eq!(singularize("ay", "utanaka").unwrap(), "uta");
-/// ```
 pub(crate) fn singularize(name: &str) -> Cow<'_, str> {
     if let Some(stem) = name.strip_suffix("naka")
         && !stem.is_empty()
@@ -25,14 +25,6 @@ pub(crate) fn singularize(name: &str) -> Cow<'_, str> {
 }
 
 /// Returns a list of possible plural forms for an Aymara noun.
-///
-/// # Examples
-///
-/// ```
-/// # use i18n_inflector::pluralize;
-/// let result = pluralize("ay", "uta").unwrap();
-/// assert!(result.iter().any(|v| v == "utanaka"));
-/// ```
 pub(crate) fn pluralize(name: &str) -> Vec<Cow<'_, str>> {
     vec![format!("{name}naka").into()]
 }

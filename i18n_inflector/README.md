@@ -18,6 +18,7 @@ use i18n_inflector::{singularize, pluralize};
 // English
 assert_eq!(singularize("en", "users").unwrap(), "user");
 assert_eq!(singularize("en", "categories").unwrap(), "category");
+assert_eq!(singularize("en-US", "children").unwrap(), "child");
 
 let plurals = pluralize("en", "user").unwrap();
 assert!(plurals.iter().any(|v| v == "users"));

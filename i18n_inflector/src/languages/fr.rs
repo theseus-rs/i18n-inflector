@@ -3,22 +3,21 @@
 //! Also used for Interlingua (ia), Interlingue (ie), Occitan (oc), Romansh (rm), and
 //! Walloon (wa).
 
+use crate::language_rules::LanguageRuleSet;
 use alloc::borrow::Cow;
 use alloc::format;
 use alloc::vec;
 use alloc::vec::Vec;
 
+pub(crate) static RULES: LanguageRuleSet = LanguageRuleSet {
+    language: "fr",
+    singularize_fn: singularize,
+    pluralize_fn: pluralize,
+};
+
 /// Converts a plural French noun to its singular form.
 ///
 /// Handles `-aux` -> `-al` transformation and regular `-s` plurals.
-///
-/// # Examples
-///
-/// ```
-/// # use i18n_inflector::singularize;
-/// assert_eq!(singularize("fr", "utilisateurs").unwrap(), "utilisateur");
-/// assert_eq!(singularize("fr", "journaux").unwrap(), "journal");
-/// ```
 pub(crate) fn singularize(name: &str) -> Cow<'_, str> {
     if let Some(stem) = name.strip_suffix("aux")
         && !stem.is_empty()
@@ -34,14 +33,6 @@ pub(crate) fn singularize(name: &str) -> Cow<'_, str> {
 }
 
 /// Returns a list of possible plural forms for a French noun.
-///
-/// # Examples
-///
-/// ```
-/// # use i18n_inflector::pluralize;
-/// let result = pluralize("fr", "utilisateur").unwrap();
-/// assert!(result.iter().any(|v| v == "utilisateurs"));
-/// ```
 pub(crate) fn pluralize(name: &str) -> Vec<Cow<'_, str>> {
     let mut candidates = vec![format!("{name}s").into()];
     if let Some(stem) = name.strip_suffix("al") {

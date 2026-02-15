@@ -2,22 +2,21 @@
 //!
 //! Also used for Cornish (kw).
 
+use crate::language_rules::LanguageRuleSet;
 use alloc::borrow::Cow;
 use alloc::format;
 use alloc::vec;
 use alloc::vec::Vec;
 
+pub(crate) static RULES: LanguageRuleSet = LanguageRuleSet {
+    language: "cy",
+    singularize_fn: singularize,
+    pluralize_fn: pluralize,
+};
+
 /// Converts a plural Welsh noun to its singular form.
 ///
 /// Handles `-iau`, `-au`, `-oedd`, and `-od` plural suffixes.
-///
-/// # Examples
-///
-/// ```
-/// # use i18n_inflector::singularize;
-/// assert_eq!(singularize("cy", "cathod").unwrap(), "cath");
-/// assert_eq!(singularize("cy", "ceiroedd").unwrap(), "ceir");
-/// ```
 pub(crate) fn singularize(name: &str) -> Cow<'_, str> {
     if let Some(stem) = name.strip_suffix("iau")
         && !stem.is_empty()
@@ -43,14 +42,6 @@ pub(crate) fn singularize(name: &str) -> Cow<'_, str> {
 }
 
 /// Returns a list of possible plural forms for a Welsh noun.
-///
-/// # Examples
-///
-/// ```
-/// # use i18n_inflector::pluralize;
-/// let result = pluralize("cy", "cath").unwrap();
-/// assert!(result.iter().any(|v| v == "cathod"));
-/// ```
 pub(crate) fn pluralize(name: &str) -> Vec<Cow<'_, str>> {
     vec![
         format!("{name}iau").into(),

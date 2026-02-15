@@ -1,5 +1,11 @@
 //! Cornish (kw) inflection rules.
-//!
-//! Uses the same rules as Welsh. See [`super::cy`] for the implementation.
+
+use crate::language_rules::LanguageRuleSet;
 
 pub(crate) use super::cy::{pluralize, singularize};
+
+pub(crate) static RULES: LanguageRuleSet = LanguageRuleSet {
+    language: "kw",
+    singularize_fn: singularize,
+    pluralize_fn: pluralize,
+};

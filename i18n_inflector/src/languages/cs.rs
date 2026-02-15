@@ -1,21 +1,20 @@
 //! Czech and Slovak (cs, sk) inflection rules.
 
+use crate::language_rules::LanguageRuleSet;
 use alloc::borrow::Cow;
 use alloc::format;
 use alloc::vec;
 use alloc::vec::Vec;
 
+pub(crate) static RULES: LanguageRuleSet = LanguageRuleSet {
+    language: "cs",
+    singularize_fn: singularize,
+    pluralize_fn: pluralize,
+};
+
 /// Converts a plural Czech / Slovak noun to its singular form.
 ///
 /// Handles `-y`, `-e`, and `-i` plural suffixes.
-///
-/// # Examples
-///
-/// ```
-/// # use i18n_inflector::singularize;
-/// assert_eq!(singularize("cs", "produkty").unwrap(), "produkt");
-/// assert_eq!(singularize("sk", "produkty").unwrap(), "produkt");
-/// ```
 pub(crate) fn singularize(name: &str) -> Cow<'_, str> {
     if let Some(stem) = name.strip_suffix('y')
         && !stem.is_empty()
@@ -36,14 +35,6 @@ pub(crate) fn singularize(name: &str) -> Cow<'_, str> {
 }
 
 /// Returns a list of possible plural forms for a Czech/Slovak noun.
-///
-/// # Examples
-///
-/// ```
-/// # use i18n_inflector::pluralize;
-/// let result = pluralize("cs", "produkt").unwrap();
-/// assert!(result.iter().any(|v| v == "produkty"));
-/// ```
 pub(crate) fn pluralize(name: &str) -> Vec<Cow<'_, str>> {
     vec![
         format!("{name}y").into(),

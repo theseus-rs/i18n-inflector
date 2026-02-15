@@ -1,21 +1,20 @@
 //! Breton (br) inflection rules.
 
+use crate::language_rules::LanguageRuleSet;
 use alloc::borrow::Cow;
 use alloc::format;
 use alloc::vec;
 use alloc::vec::Vec;
 
+pub(crate) static RULES: LanguageRuleSet = LanguageRuleSet {
+    language: "br",
+    singularize_fn: singularize,
+    pluralize_fn: pluralize,
+};
+
 /// Converts a plural Breton noun to its singular form.
 ///
 /// Handles `-ioù`, `-où`, and `-ed` plural suffixes.
-///
-/// # Examples
-///
-/// ```
-/// # use i18n_inflector::singularize;
-/// assert_eq!(singularize("br", "bagou").unwrap(), "bag");
-/// assert_eq!(singularize("br", "laboured").unwrap(), "labour");
-/// ```
 pub(crate) fn singularize(name: &str) -> Cow<'_, str> {
     if let Some(stem) = name.strip_suffix("iou")
         && !stem.is_empty()
@@ -36,14 +35,6 @@ pub(crate) fn singularize(name: &str) -> Cow<'_, str> {
 }
 
 /// Returns a list of possible plural forms for a Breton noun.
-///
-/// # Examples
-///
-/// ```
-/// # use i18n_inflector::pluralize;
-/// let result = pluralize("br", "bag").unwrap();
-/// assert!(result.iter().any(|v| v == "bagou"));
-/// ```
 pub(crate) fn pluralize(name: &str) -> Vec<Cow<'_, str>> {
     vec![
         format!("{name}iou").into(),

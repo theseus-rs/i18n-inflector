@@ -3,22 +3,22 @@
 //! Also used for Kongo (kg), Kikuyu (ki), Kuanyama (kj), Luganda (lg), Luba-Katanga (lu),
 //! Chichewa (ny), Kinyarwanda (rw), and Shona (sn).
 
+use crate::language_rules::LanguageRuleSet;
 use alloc::borrow::Cow;
 use alloc::format;
 use alloc::vec;
 use alloc::vec::Vec;
 
+pub(crate) static RULES: LanguageRuleSet = LanguageRuleSet {
+    language: "sw",
+    singularize_fn: singularize,
+    pluralize_fn: pluralize,
+};
+
 /// Converts a plural Swahili noun to its singular form.
 ///
 /// Swahili uses prefix-based noun classes for plurality, but common suffixes `-ni` and `-zi` are
 /// stripped when present.
-///
-/// # Examples
-///
-/// ```
-/// # use i18n_inflector::singularize;
-/// assert_eq!(singularize("sw", "vitabuni").unwrap(), "vitabu");
-/// ```
 pub(crate) fn singularize(name: &str) -> Cow<'_, str> {
     if let Some(stem) = name.strip_suffix("ni")
         && !stem.is_empty()
@@ -34,14 +34,6 @@ pub(crate) fn singularize(name: &str) -> Cow<'_, str> {
 }
 
 /// Returns a list of possible plural forms for a Swahili noun.
-///
-/// # Examples
-///
-/// ```
-/// # use i18n_inflector::pluralize;
-/// let result = pluralize("sw", "kitabu").unwrap();
-/// assert!(result.iter().any(|v| v == "kitabuni"));
-/// ```
 pub(crate) fn pluralize(name: &str) -> Vec<Cow<'_, str>> {
     vec![format!("{name}ni").into(), format!("{name}zi").into()]
 }

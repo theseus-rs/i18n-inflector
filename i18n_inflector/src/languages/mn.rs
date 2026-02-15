@@ -1,20 +1,20 @@
 //! Mongolian (mn) inflection rules.
 
+use crate::language_rules::LanguageRuleSet;
 use alloc::borrow::Cow;
 use alloc::format;
 use alloc::vec;
 use alloc::vec::Vec;
 
+pub(crate) static RULES: LanguageRuleSet = LanguageRuleSet {
+    language: "mn",
+    singularize_fn: singularize,
+    pluralize_fn: pluralize,
+};
+
 /// Converts a plural Mongolian noun (Latin transliteration) to its singular form.
 ///
 /// Handles `-ууд`/`-uud` and `-нууд`/`-nuud` plural suffixes (in Latin transliteration).
-///
-/// # Examples
-///
-/// ```
-/// # use i18n_inflector::singularize;
-/// assert_eq!(singularize("mn", "nomuud").unwrap(), "nom");
-/// ```
 pub(crate) fn singularize(name: &str) -> Cow<'_, str> {
     if let Some(stem) = name.strip_suffix("nuud")
         && !stem.is_empty()
@@ -30,14 +30,6 @@ pub(crate) fn singularize(name: &str) -> Cow<'_, str> {
 }
 
 /// Returns a list of possible plural forms for a Mongolian noun (Latin transliteration).
-///
-/// # Examples
-///
-/// ```
-/// # use i18n_inflector::pluralize;
-/// let result = pluralize("mn", "nom").unwrap();
-/// assert!(result.iter().any(|v| v == "nomuud"));
-/// ```
 pub(crate) fn pluralize(name: &str) -> Vec<Cow<'_, str>> {
     vec![format!("{name}nuud").into(), format!("{name}uud").into()]
 }

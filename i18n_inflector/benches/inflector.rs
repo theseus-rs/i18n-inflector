@@ -1,78 +1,101 @@
 use criterion::{Criterion, criterion_group, criterion_main};
-use i18n_inflector::{pluralize, singularize};
+use i18n_inflector::{LanguageRules, language_rules};
 use std::hint::black_box;
 
 fn bench_singularize_no_change(c: &mut Criterion) {
+    let rules = language_rules("en").expect("supported locale");
     c.bench_function("singularize_no_change", |b| {
-        b.iter(|| singularize(black_box("en"), black_box("user")).expect("supported locale"));
+        b.iter(|| rules.singularize(black_box("user")));
     });
 }
 
 fn bench_pluralize_no_change(c: &mut Criterion) {
+    let rules = language_rules("en").expect("supported locale");
     c.bench_function("pluralize_no_change", |b| {
-        b.iter(|| pluralize(black_box("en"), black_box("users")).expect("supported locale"));
+        b.iter(|| rules.pluralize(black_box("users")));
     });
 }
 
 fn bench_singularize_en(c: &mut Criterion) {
+    let rules = language_rules("en").expect("supported locale");
     c.bench_function("singularize_en", |b| {
-        b.iter(|| singularize(black_box("en"), black_box("categories")).expect("supported locale"));
+        b.iter(|| rules.singularize(black_box("categories")));
     });
 }
 
 fn bench_pluralize_en(c: &mut Criterion) {
+    let rules = language_rules("en").expect("supported locale");
     c.bench_function("pluralize_en", |b| {
-        b.iter(|| pluralize(black_box("en"), black_box("category")).expect("supported locale"));
+        b.iter(|| rules.pluralize(black_box("category")));
     });
 }
 
 fn bench_singularize_es(c: &mut Criterion) {
+    let rules = language_rules("es").expect("supported locale");
     c.bench_function("singularize_es", |b| {
-        b.iter(|| singularize(black_box("es"), black_box("ciudades")).expect("supported locale"));
+        b.iter(|| rules.singularize(black_box("ciudades")));
     });
 }
 
 fn bench_pluralize_es(c: &mut Criterion) {
+    let rules = language_rules("es").expect("supported locale");
     c.bench_function("pluralize_es", |b| {
-        b.iter(|| pluralize(black_box("es"), black_box("ciudad")).expect("supported locale"));
+        b.iter(|| rules.pluralize(black_box("ciudad")));
     });
 }
 
 fn bench_singularize_de(c: &mut Criterion) {
+    let rules = language_rules("de").expect("supported locale");
     c.bench_function("singularize_de", |b| {
-        b.iter(|| singularize(black_box("de"), black_box("produkte")).expect("supported locale"));
+        b.iter(|| rules.singularize(black_box("produkte")));
     });
 }
 
 fn bench_pluralize_de(c: &mut Criterion) {
+    let rules = language_rules("de").expect("supported locale");
     c.bench_function("pluralize_de", |b| {
-        b.iter(|| pluralize(black_box("de"), black_box("produkt")).expect("supported locale"));
+        b.iter(|| rules.pluralize(black_box("produkt")));
     });
 }
 
 fn bench_singularize_fr(c: &mut Criterion) {
+    let rules = language_rules("fr").expect("supported locale");
     c.bench_function("singularize_fr", |b| {
-        b.iter(|| singularize(black_box("fr"), black_box("journaux")).expect("supported locale"));
+        b.iter(|| rules.singularize(black_box("journaux")));
     });
 }
 
 fn bench_singularize_invariant(c: &mut Criterion) {
+    let rules = language_rules("ja").expect("supported locale");
     c.bench_function("singularize_invariant", |b| {
-        b.iter(|| singularize(black_box("ja"), black_box("user")).expect("supported locale"));
-    });
-}
-
-fn bench_singularize_unknown_locale(c: &mut Criterion) {
-    c.bench_function("singularize_unknown_locale", |b| {
-        b.iter(|| {
-            let _ = singularize(black_box("xx"), black_box("users"));
-        });
+        b.iter(|| rules.singularize(black_box("user")));
     });
 }
 
 fn bench_pluralize_tr(c: &mut Criterion) {
+    let rules = language_rules("tr").expect("supported locale");
     c.bench_function("pluralize_tr", |b| {
-        b.iter(|| pluralize(black_box("tr"), black_box("kullanici")).expect("supported locale"));
+        b.iter(|| rules.pluralize(black_box("kullanici")));
+    });
+}
+
+fn bench_language_rules_en(c: &mut Criterion) {
+    c.bench_function("language_rules_en", |b| {
+        b.iter(|| language_rules(black_box("en")).expect("supported locale"));
+    });
+}
+
+fn bench_language_rules_en_us(c: &mut Criterion) {
+    c.bench_function("language_rules_en_us", |b| {
+        b.iter(|| language_rules(black_box("en-US")).expect("supported locale"));
+    });
+}
+
+fn bench_language_rules_unknown(c: &mut Criterion) {
+    c.bench_function("language_rules_unknown", |b| {
+        b.iter(|| {
+            let _ = language_rules(black_box("xx"));
+        });
     });
 }
 
@@ -88,7 +111,9 @@ criterion_group!(
     bench_pluralize_de,
     bench_singularize_fr,
     bench_singularize_invariant,
-    bench_singularize_unknown_locale,
     bench_pluralize_tr,
+    bench_language_rules_en,
+    bench_language_rules_en_us,
+    bench_language_rules_unknown,
 );
 criterion_main!(benches);
