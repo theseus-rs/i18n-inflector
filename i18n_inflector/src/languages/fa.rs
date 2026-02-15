@@ -1,6 +1,6 @@
 //! Persian (fa) inflection rules.
 //!
-//! Also used for Tajik (tg).
+//! Also used for Ossetian (os) and Tajik (tg).
 
 use alloc::borrow::Cow;
 use alloc::format;

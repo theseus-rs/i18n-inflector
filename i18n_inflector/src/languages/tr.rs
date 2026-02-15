@@ -1,4 +1,7 @@
 //! Turkish (tr) inflection rules.
+//!
+//! Also used for Azerbaijani (az), Bashkir (ba), Chuvash (cv), Kazakh (kk), Kyrgyz (ky),
+//! Turkmen (tk), Tatar (tt), Uyghur (ug), and Uzbek (uz).
 
 use alloc::borrow::Cow;
 use alloc::format;

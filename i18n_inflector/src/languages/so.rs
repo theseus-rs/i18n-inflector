@@ -1,4 +1,6 @@
 //! Somali (so) inflection rules.
+//!
+//! Also used for Oromo (om).
 
 use alloc::borrow::Cow;
 use alloc::format;

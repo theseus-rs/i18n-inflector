@@ -4,8 +4,182 @@ use alloc::borrow::Cow;
 use alloc::format;
 use alloc::vec::Vec;
 
+use phf::phf_map;
+
 use crate::error::{Error, Result};
 use crate::languages;
+
+type PluralizeFn = for<'a> fn(&'a str) -> Vec<Cow<'a, str>>;
+
+static PLURALIZE_MAP: phf::Map<&'static str, PluralizeFn> = phf_map! {
+    "aa" => languages::aa::pluralize,
+    "ab" => languages::ab::pluralize,
+    "ae" => languages::ae::pluralize,
+    "af" => languages::af::pluralize,
+    "ak" => languages::ak::pluralize,
+    "am" => languages::am::pluralize,
+    "an" => languages::an::pluralize,
+    "ar" => languages::ar::pluralize,
+    "as" => languages::r#as::pluralize,
+    "av" => languages::av::pluralize,
+    "ay" => languages::ay::pluralize,
+    "az" => languages::az::pluralize,
+    "ba" => languages::ba::pluralize,
+    "be" => languages::be::pluralize,
+    "bg" => languages::bg::pluralize,
+    "bi" => languages::bi::pluralize,
+    "bm" => languages::bm::pluralize,
+    "bn" => languages::bn::pluralize,
+    "bo" => languages::bo::pluralize,
+    "br" => languages::br::pluralize,
+    "bs" => languages::bs::pluralize,
+    "ca" => languages::ca::pluralize,
+    "ce" => languages::ce::pluralize,
+    "ch" => languages::ch::pluralize,
+    "co" => languages::co::pluralize,
+    "cs" => languages::cs::pluralize,
+    "cu" => languages::cu::pluralize,
+    "cv" => languages::cv::pluralize,
+    "cy" => languages::cy::pluralize,
+    "da" => languages::da::pluralize,
+    "de" => languages::de::pluralize,
+    "dv" => languages::dv::pluralize,
+    "dz" => languages::dz::pluralize,
+    "ee" => languages::ee::pluralize,
+    "el" => languages::el::pluralize,
+    "en" => languages::en::pluralize,
+    "eo" => languages::eo::pluralize,
+    "es" => languages::es::pluralize,
+    "et" => languages::et::pluralize,
+    "eu" => languages::eu::pluralize,
+    "fa" => languages::fa::pluralize,
+    "ff" => languages::ff::pluralize,
+    "fi" => languages::fi::pluralize,
+    "fj" => languages::fj::pluralize,
+    "fo" => languages::fo::pluralize,
+    "fr" => languages::fr::pluralize,
+    "fy" => languages::fy::pluralize,
+    "ga" => languages::ga::pluralize,
+    "gd" => languages::gd::pluralize,
+    "gl" => languages::gl::pluralize,
+    "gn" => languages::gn::pluralize,
+    "gu" => languages::gu::pluralize,
+    "gv" => languages::gv::pluralize,
+    "ha" => languages::ha::pluralize,
+    "he" => languages::he::pluralize,
+    "hi" => languages::hi::pluralize,
+    "ho" => languages::ho::pluralize,
+    "hr" => languages::hr::pluralize,
+    "ht" => languages::ht::pluralize,
+    "hu" => languages::hu::pluralize,
+    "hy" => languages::hy::pluralize,
+    "ia" => languages::ia::pluralize,
+    "id" => languages::id::pluralize,
+    "ie" => languages::ie::pluralize,
+    "ig" => languages::ig::pluralize,
+    "ii" => languages::ii::pluralize,
+    "ik" => languages::ik::pluralize,
+    "is" => languages::is::pluralize,
+    "it" => languages::it::pluralize,
+    "iu" => languages::iu::pluralize,
+    "ja" => languages::ja::pluralize,
+    "jv" => languages::jv::pluralize,
+    "ka" => languages::ka::pluralize,
+    "kg" => languages::kg::pluralize,
+    "ki" => languages::ki::pluralize,
+    "kj" => languages::kj::pluralize,
+    "kk" => languages::kk::pluralize,
+    "km" => languages::km::pluralize,
+    "kn" => languages::kn::pluralize,
+    "ko" => languages::ko::pluralize,
+    "ku" => languages::ku::pluralize,
+    "kv" => languages::kv::pluralize,
+    "kw" => languages::kw::pluralize,
+    "ky" => languages::ky::pluralize,
+    "la" => languages::la::pluralize,
+    "lb" => languages::lb::pluralize,
+    "lg" => languages::lg::pluralize,
+    "li" => languages::li::pluralize,
+    "lo" => languages::lo::pluralize,
+    "lt" => languages::lt::pluralize,
+    "lu" => languages::lu::pluralize,
+    "lv" => languages::lv::pluralize,
+    "mg" => languages::mg::pluralize,
+    "mi" => languages::mi::pluralize,
+    "mk" => languages::mk::pluralize,
+    "ml" => languages::ml::pluralize,
+    "mn" => languages::mn::pluralize,
+    "mr" => languages::mr::pluralize,
+    "ms" => languages::ms::pluralize,
+    "mt" => languages::mt::pluralize,
+    "my" => languages::my::pluralize,
+    "nb" => languages::nb::pluralize,
+    "nd" => languages::nd::pluralize,
+    "ne" => languages::ne::pluralize,
+    "nl" => languages::nl::pluralize,
+    "nn" => languages::nn::pluralize,
+    "no" => languages::no::pluralize,
+    "nr" => languages::nr::pluralize,
+    "nv" => languages::nv::pluralize,
+    "ny" => languages::ny::pluralize,
+    "oc" => languages::oc::pluralize,
+    "oj" => languages::oj::pluralize,
+    "om" => languages::om::pluralize,
+    "or" => languages::or::pluralize,
+    "os" => languages::os::pluralize,
+    "pa" => languages::pa::pluralize,
+    "pi" => languages::pi::pluralize,
+    "pl" => languages::pl::pluralize,
+    "ps" => languages::ps::pluralize,
+    "pt" => languages::pt::pluralize,
+    "qu" => languages::qu::pluralize,
+    "rm" => languages::rm::pluralize,
+    "ro" => languages::ro::pluralize,
+    "ru" => languages::ru::pluralize,
+    "rw" => languages::rw::pluralize,
+    "sa" => languages::sa::pluralize,
+    "sc" => languages::sc::pluralize,
+    "sd" => languages::sd::pluralize,
+    "se" => languages::se::pluralize,
+    "sg" => languages::sg::pluralize,
+    "si" => languages::si::pluralize,
+    "sk" => languages::sk::pluralize,
+    "sl" => languages::sl::pluralize,
+    "sm" => languages::sm::pluralize,
+    "sn" => languages::sn::pluralize,
+    "so" => languages::so::pluralize,
+    "sq" => languages::sq::pluralize,
+    "sr" => languages::sr::pluralize,
+    "ss" => languages::ss::pluralize,
+    "st" => languages::st::pluralize,
+    "su" => languages::su::pluralize,
+    "sv" => languages::sv::pluralize,
+    "sw" => languages::sw::pluralize,
+    "ta" => languages::ta::pluralize,
+    "te" => languages::te::pluralize,
+    "tg" => languages::tg::pluralize,
+    "th" => languages::th::pluralize,
+    "ti" => languages::ti::pluralize,
+    "tk" => languages::tk::pluralize,
+    "tl" => languages::tl::pluralize,
+    "tn" => languages::tn::pluralize,
+    "tr" => languages::tr::pluralize,
+    "ts" => languages::ts::pluralize,
+    "tt" => languages::tt::pluralize,
+    "ug" => languages::ug::pluralize,
+    "uk" => languages::uk::pluralize,
+    "ur" => languages::ur::pluralize,
+    "uz" => languages::uz::pluralize,
+    "ve" => languages::ve::pluralize,
+    "vi" => languages::vi::pluralize,
+    "wa" => languages::wa::pluralize,
+    "wo" => languages::wo::pluralize,
+    "xh" => languages::xh::pluralize,
+    "yi" => languages::yi::pluralize,
+    "yo" => languages::yo::pluralize,
+    "zh" => languages::zh::pluralize,
+    "zu" => languages::zu::pluralize,
+};
 
 /// Generates plural form candidates for a word based on the given locale.
 ///
@@ -40,136 +214,11 @@ use crate::languages;
 /// // Unsupported locale returns an error
 /// assert!(pluralize("xx", "user").is_err());
 /// ```
-#[expect(clippy::too_many_lines)]
 pub fn pluralize<'a>(locale: &str, name: &'a str) -> Result<Vec<Cow<'a, str>>> {
-    match locale {
-        "af" => Ok(languages::af::pluralize(name)),
-        "am" => Ok(languages::am::pluralize(name)),
-        "an" => Ok(languages::an::pluralize(name)),
-        "ar" => Ok(languages::ar::pluralize(name)),
-        "as" => Ok(languages::r#as::pluralize(name)),
-        "az" => Ok(languages::az::pluralize(name)),
-        "be" => Ok(languages::be::pluralize(name)),
-        "bg" => Ok(languages::bg::pluralize(name)),
-        "bn" => Ok(languages::bn::pluralize(name)),
-        "bo" => Ok(languages::bo::pluralize(name)),
-        "br" => Ok(languages::br::pluralize(name)),
-        "bs" => Ok(languages::bs::pluralize(name)),
-        "ca" => Ok(languages::ca::pluralize(name)),
-        "co" => Ok(languages::co::pluralize(name)),
-        "cs" => Ok(languages::cs::pluralize(name)),
-        "cy" => Ok(languages::cy::pluralize(name)),
-        "da" => Ok(languages::da::pluralize(name)),
-        "de" => Ok(languages::de::pluralize(name)),
-        "el" => Ok(languages::el::pluralize(name)),
-        "en" => Ok(languages::en::pluralize(name)),
-        "eo" => Ok(languages::eo::pluralize(name)),
-        "es" => Ok(languages::es::pluralize(name)),
-        "et" => Ok(languages::et::pluralize(name)),
-        "eu" => Ok(languages::eu::pluralize(name)),
-        "fa" => Ok(languages::fa::pluralize(name)),
-        "fi" => Ok(languages::fi::pluralize(name)),
-        "fo" => Ok(languages::fo::pluralize(name)),
-        "fr" => Ok(languages::fr::pluralize(name)),
-        "fy" => Ok(languages::fy::pluralize(name)),
-        "ga" => Ok(languages::ga::pluralize(name)),
-        "gd" => Ok(languages::gd::pluralize(name)),
-        "gl" => Ok(languages::gl::pluralize(name)),
-        "gu" => Ok(languages::gu::pluralize(name)),
-        "gv" => Ok(languages::gv::pluralize(name)),
-        "ha" => Ok(languages::ha::pluralize(name)),
-        "he" => Ok(languages::he::pluralize(name)),
-        "hi" => Ok(languages::hi::pluralize(name)),
-        "hr" => Ok(languages::hr::pluralize(name)),
-        "ht" => Ok(languages::ht::pluralize(name)),
-        "hu" => Ok(languages::hu::pluralize(name)),
-        "hy" => Ok(languages::hy::pluralize(name)),
-        "id" => Ok(languages::id::pluralize(name)),
-        "ig" => Ok(languages::ig::pluralize(name)),
-        "is" => Ok(languages::is::pluralize(name)),
-        "it" => Ok(languages::it::pluralize(name)),
-        "ja" => Ok(languages::ja::pluralize(name)),
-        "jv" => Ok(languages::jv::pluralize(name)),
-        "ka" => Ok(languages::ka::pluralize(name)),
-        "kk" => Ok(languages::kk::pluralize(name)),
-        "km" => Ok(languages::km::pluralize(name)),
-        "kn" => Ok(languages::kn::pluralize(name)),
-        "ko" => Ok(languages::ko::pluralize(name)),
-        "ku" => Ok(languages::ku::pluralize(name)),
-        "kw" => Ok(languages::kw::pluralize(name)),
-        "ky" => Ok(languages::ky::pluralize(name)),
-        "la" => Ok(languages::la::pluralize(name)),
-        "lb" => Ok(languages::lb::pluralize(name)),
-        "lo" => Ok(languages::lo::pluralize(name)),
-        "lt" => Ok(languages::lt::pluralize(name)),
-        "lv" => Ok(languages::lv::pluralize(name)),
-        "mg" => Ok(languages::mg::pluralize(name)),
-        "mi" => Ok(languages::mi::pluralize(name)),
-        "mk" => Ok(languages::mk::pluralize(name)),
-        "ml" => Ok(languages::ml::pluralize(name)),
-        "mn" => Ok(languages::mn::pluralize(name)),
-        "mr" => Ok(languages::mr::pluralize(name)),
-        "ms" => Ok(languages::ms::pluralize(name)),
-        "mt" => Ok(languages::mt::pluralize(name)),
-        "my" => Ok(languages::my::pluralize(name)),
-        "nb" => Ok(languages::nb::pluralize(name)),
-        "nd" => Ok(languages::nd::pluralize(name)),
-        "ne" => Ok(languages::ne::pluralize(name)),
-        "nl" => Ok(languages::nl::pluralize(name)),
-        "nn" => Ok(languages::nn::pluralize(name)),
-        "no" => Ok(languages::no::pluralize(name)),
-        "nr" => Ok(languages::nr::pluralize(name)),
-        "oc" => Ok(languages::oc::pluralize(name)),
-        "or" => Ok(languages::or::pluralize(name)),
-        "pa" => Ok(languages::pa::pluralize(name)),
-        "pl" => Ok(languages::pl::pluralize(name)),
-        "ps" => Ok(languages::ps::pluralize(name)),
-        "pt" => Ok(languages::pt::pluralize(name)),
-        "qu" => Ok(languages::qu::pluralize(name)),
-        "rm" => Ok(languages::rm::pluralize(name)),
-        "ro" => Ok(languages::ro::pluralize(name)),
-        "ru" => Ok(languages::ru::pluralize(name)),
-        "rw" => Ok(languages::rw::pluralize(name)),
-        "sc" => Ok(languages::sc::pluralize(name)),
-        "sd" => Ok(languages::sd::pluralize(name)),
-        "si" => Ok(languages::si::pluralize(name)),
-        "sk" => Ok(languages::sk::pluralize(name)),
-        "sl" => Ok(languages::sl::pluralize(name)),
-        "sm" => Ok(languages::sm::pluralize(name)),
-        "sn" => Ok(languages::sn::pluralize(name)),
-        "so" => Ok(languages::so::pluralize(name)),
-        "sq" => Ok(languages::sq::pluralize(name)),
-        "sr" => Ok(languages::sr::pluralize(name)),
-        "ss" => Ok(languages::ss::pluralize(name)),
-        "st" => Ok(languages::st::pluralize(name)),
-        "su" => Ok(languages::su::pluralize(name)),
-        "sv" => Ok(languages::sv::pluralize(name)),
-        "sw" => Ok(languages::sw::pluralize(name)),
-        "ta" => Ok(languages::ta::pluralize(name)),
-        "te" => Ok(languages::te::pluralize(name)),
-        "tg" => Ok(languages::tg::pluralize(name)),
-        "th" => Ok(languages::th::pluralize(name)),
-        "ti" => Ok(languages::ti::pluralize(name)),
-        "tk" => Ok(languages::tk::pluralize(name)),
-        "tl" => Ok(languages::tl::pluralize(name)),
-        "tn" => Ok(languages::tn::pluralize(name)),
-        "tr" => Ok(languages::tr::pluralize(name)),
-        "ts" => Ok(languages::ts::pluralize(name)),
-        "tt" => Ok(languages::tt::pluralize(name)),
-        "ug" => Ok(languages::ug::pluralize(name)),
-        "uk" => Ok(languages::uk::pluralize(name)),
-        "ur" => Ok(languages::ur::pluralize(name)),
-        "uz" => Ok(languages::uz::pluralize(name)),
-        "ve" => Ok(languages::ve::pluralize(name)),
-        "vi" => Ok(languages::vi::pluralize(name)),
-        "wo" => Ok(languages::wo::pluralize(name)),
-        "xh" => Ok(languages::xh::pluralize(name)),
-        "yi" => Ok(languages::yi::pluralize(name)),
-        "yo" => Ok(languages::yo::pluralize(name)),
-        "zh" => Ok(languages::zh::pluralize(name)),
-        "zu" => Ok(languages::zu::pluralize(name)),
-        _ => Err(Error::new(format!("unsupported locale: {locale}"))),
-    }
+    PLURALIZE_MAP
+        .get(locale)
+        .map(|f| f(name))
+        .ok_or_else(|| Error::new(format!("unsupported locale: {locale}")))
 }
 
 #[cfg(test)]
@@ -179,9 +228,29 @@ mod tests {
     use alloc::vec;
 
     #[test]
+    fn test_aa() {
+        assert_eq!(pluralize("aa", "user").unwrap(), vec!["user"]);
+    }
+
+    #[test]
+    fn test_ab() {
+        assert_eq!(pluralize("ab", "user").unwrap(), vec!["user"]);
+    }
+
+    #[test]
+    fn test_ae() {
+        assert_eq!(pluralize("ae", "user").unwrap(), vec!["user"]);
+    }
+
+    #[test]
     fn test_af() {
         let result = pluralize("af", "kat").unwrap();
         assert!(result.iter().any(|v| v == "kate"));
+    }
+
+    #[test]
+    fn test_ak() {
+        assert_eq!(pluralize("ak", "user").unwrap(), vec!["user"]);
     }
 
     #[test]
@@ -209,8 +278,25 @@ mod tests {
     }
 
     #[test]
+    fn test_av() {
+        assert_eq!(pluralize("av", "user").unwrap(), vec!["user"]);
+    }
+
+    #[test]
+    fn test_ay() {
+        let result = pluralize("ay", "uta").unwrap();
+        assert!(result.iter().any(|v| v == "utanaka"));
+    }
+
+    #[test]
     fn test_az() {
         let result = pluralize("az", "kullanici").unwrap();
+        assert!(result.iter().any(|v| v == "kullanicilar"));
+    }
+
+    #[test]
+    fn test_ba() {
+        let result = pluralize("ba", "kullanici").unwrap();
         assert!(result.iter().any(|v| v == "kullanicilar"));
     }
 
@@ -224,6 +310,16 @@ mod tests {
     fn test_bg() {
         let result = pluralize("bg", "korisnik").unwrap();
         assert!(result.iter().any(|v| v == "korisnici"));
+    }
+
+    #[test]
+    fn test_bi() {
+        assert_eq!(pluralize("bi", "user").unwrap(), vec!["user"]);
+    }
+
+    #[test]
+    fn test_bm() {
+        assert_eq!(pluralize("bm", "user").unwrap(), vec!["user"]);
     }
 
     #[test]
@@ -256,6 +352,16 @@ mod tests {
     }
 
     #[test]
+    fn test_ce() {
+        assert_eq!(pluralize("ce", "user").unwrap(), vec!["user"]);
+    }
+
+    #[test]
+    fn test_ch() {
+        assert_eq!(pluralize("ch", "user").unwrap(), vec!["user"]);
+    }
+
+    #[test]
     fn test_co() {
         let result = pluralize("co", "prodotto").unwrap();
         assert!(result.iter().any(|v| v == "prodotti"));
@@ -265,6 +371,17 @@ mod tests {
     fn test_cs() {
         let result = pluralize("cs", "produkt").unwrap();
         assert!(result.iter().any(|v| v == "produkty"));
+    }
+
+    #[test]
+    fn test_cu() {
+        assert_eq!(pluralize("cu", "user").unwrap(), vec!["user"]);
+    }
+
+    #[test]
+    fn test_cv() {
+        let result = pluralize("cv", "kullanici").unwrap();
+        assert!(result.iter().any(|v| v == "kullanicilar"));
     }
 
     #[test]
@@ -283,6 +400,22 @@ mod tests {
     fn test_de() {
         let result = pluralize("de", "produkt").unwrap();
         assert!(result.iter().any(|v| v == "produkte"));
+    }
+
+    #[test]
+    fn test_dv() {
+        let result = pluralize("dv", "upyogakarta").unwrap();
+        assert!(result.iter().any(|v| v == "upyogakartaon"));
+    }
+
+    #[test]
+    fn test_dz() {
+        assert_eq!(pluralize("dz", "user").unwrap(), vec!["user"]);
+    }
+
+    #[test]
+    fn test_ee() {
+        assert_eq!(pluralize("ee", "user").unwrap(), vec!["user"]);
     }
 
     #[test]
@@ -328,9 +461,19 @@ mod tests {
     }
 
     #[test]
+    fn test_ff() {
+        assert_eq!(pluralize("ff", "user").unwrap(), vec!["user"]);
+    }
+
+    #[test]
     fn test_fi() {
         let result = pluralize("fi", "tuote").unwrap();
         assert!(result.iter().any(|v| v == "tuotet"));
+    }
+
+    #[test]
+    fn test_fj() {
+        assert_eq!(pluralize("fj", "user").unwrap(), vec!["user"]);
     }
 
     #[test]
@@ -370,6 +513,12 @@ mod tests {
     }
 
     #[test]
+    fn test_gn() {
+        let result = pluralize("gn", "mitã").unwrap();
+        assert!(result.iter().any(|v| v == "mitãkuéra"));
+    }
+
+    #[test]
     fn test_gu() {
         let result = pluralize("gu", "chokra").unwrap();
         assert!(result.iter().any(|v| v == "chokrao"));
@@ -400,6 +549,11 @@ mod tests {
     }
 
     #[test]
+    fn test_ho() {
+        assert_eq!(pluralize("ho", "user").unwrap(), vec!["user"]);
+    }
+
+    #[test]
     fn test_hr() {
         let result = pluralize("hr", "korisnik").unwrap();
         assert!(result.iter().any(|v| v == "korisnici"));
@@ -423,13 +577,35 @@ mod tests {
     }
 
     #[test]
+    fn test_ia() {
+        let result = pluralize("ia", "utilisateur").unwrap();
+        assert!(result.iter().any(|v| v == "utilisateurs"));
+    }
+
+    #[test]
     fn test_id() {
         assert_eq!(pluralize("id", "user").unwrap(), vec!["user"]);
     }
 
     #[test]
+    fn test_ie() {
+        let result = pluralize("ie", "utilisateur").unwrap();
+        assert!(result.iter().any(|v| v == "utilisateurs"));
+    }
+
+    #[test]
     fn test_ig() {
         assert_eq!(pluralize("ig", "user").unwrap(), vec!["user"]);
+    }
+
+    #[test]
+    fn test_ii() {
+        assert_eq!(pluralize("ii", "user").unwrap(), vec!["user"]);
+    }
+
+    #[test]
+    fn test_ik() {
+        assert_eq!(pluralize("ik", "user").unwrap(), vec!["user"]);
     }
 
     #[test]
@@ -445,6 +621,11 @@ mod tests {
     }
 
     #[test]
+    fn test_iu() {
+        assert_eq!(pluralize("iu", "user").unwrap(), vec!["user"]);
+    }
+
+    #[test]
     fn test_ja() {
         assert_eq!(pluralize("ja", "user").unwrap(), vec!["user"]);
     }
@@ -457,6 +638,24 @@ mod tests {
     #[test]
     fn test_ka() {
         assert_eq!(pluralize("ka", "user").unwrap(), vec!["user"]);
+    }
+
+    #[test]
+    fn test_kg() {
+        let result = pluralize("kg", "kitabu").unwrap();
+        assert!(result.iter().any(|v| v == "kitabuni"));
+    }
+
+    #[test]
+    fn test_ki() {
+        let result = pluralize("ki", "kitabu").unwrap();
+        assert!(result.iter().any(|v| v == "kitabuni"));
+    }
+
+    #[test]
+    fn test_kj() {
+        let result = pluralize("kj", "kitabu").unwrap();
+        assert!(result.iter().any(|v| v == "kitabuni"));
     }
 
     #[test]
@@ -488,6 +687,11 @@ mod tests {
     }
 
     #[test]
+    fn test_kv() {
+        assert_eq!(pluralize("kv", "user").unwrap(), vec!["user"]);
+    }
+
+    #[test]
     fn test_kw() {
         let result = pluralize("kw", "cath").unwrap();
         assert!(result.iter().any(|v| v == "cathod"));
@@ -512,6 +716,18 @@ mod tests {
     }
 
     #[test]
+    fn test_lg() {
+        let result = pluralize("lg", "kitabu").unwrap();
+        assert!(result.iter().any(|v| v == "kitabuni"));
+    }
+
+    #[test]
+    fn test_li() {
+        let result = pluralize("li", "klant").unwrap();
+        assert!(result.iter().any(|v| v == "klanten"));
+    }
+
+    #[test]
     fn test_lo() {
         assert_eq!(pluralize("lo", "user").unwrap(), vec!["user"]);
     }
@@ -520,6 +736,12 @@ mod tests {
     fn test_lt() {
         let result = pluralize("lt", "vartotojas").unwrap();
         assert!(result.iter().any(|v| v == "vartotojai"));
+    }
+
+    #[test]
+    fn test_lu() {
+        let result = pluralize("lu", "kitabu").unwrap();
+        assert!(result.iter().any(|v| v == "kitabuni"));
     }
 
     #[test]
@@ -621,9 +843,31 @@ mod tests {
     }
 
     #[test]
+    fn test_nv() {
+        assert_eq!(pluralize("nv", "user").unwrap(), vec!["user"]);
+    }
+
+    #[test]
+    fn test_ny() {
+        let result = pluralize("ny", "kitabu").unwrap();
+        assert!(result.iter().any(|v| v == "kitabuni"));
+    }
+
+    #[test]
     fn test_oc() {
         let result = pluralize("oc", "utilisateur").unwrap();
         assert!(result.iter().any(|v| v == "utilisateurs"));
+    }
+
+    #[test]
+    fn test_oj() {
+        assert_eq!(pluralize("oj", "user").unwrap(), vec!["user"]);
+    }
+
+    #[test]
+    fn test_om() {
+        let result = pluralize("om", "buug").unwrap();
+        assert!(result.iter().any(|v| v == "buugo"));
     }
 
     #[test]
@@ -633,9 +877,20 @@ mod tests {
     }
 
     #[test]
+    fn test_os() {
+        let result = pluralize("os", "ketab").unwrap();
+        assert!(result.iter().any(|v| v == "ketabha"));
+    }
+
+    #[test]
     fn test_pa() {
         let result = pluralize("pa", "upyogakarta").unwrap();
         assert!(result.iter().any(|v| v == "upyogakartaon"));
+    }
+
+    #[test]
+    fn test_pi() {
+        assert_eq!(pluralize("pi", "user").unwrap(), vec!["user"]);
     }
 
     #[test]
@@ -687,6 +942,11 @@ mod tests {
     }
 
     #[test]
+    fn test_sa() {
+        assert_eq!(pluralize("sa", "user").unwrap(), vec!["user"]);
+    }
+
+    #[test]
     fn test_sc() {
         let result = pluralize("sc", "prodotto").unwrap();
         assert!(result.iter().any(|v| v == "prodotti"));
@@ -696,6 +956,16 @@ mod tests {
     fn test_sd() {
         let result = pluralize("sd", "upyogakarta").unwrap();
         assert!(result.iter().any(|v| v == "upyogakartaon"));
+    }
+
+    #[test]
+    fn test_se() {
+        assert_eq!(pluralize("se", "user").unwrap(), vec!["user"]);
+    }
+
+    #[test]
+    fn test_sg() {
+        assert_eq!(pluralize("sg", "user").unwrap(), vec!["user"]);
     }
 
     #[test]
@@ -871,6 +1141,12 @@ mod tests {
     #[test]
     fn test_vi() {
         assert_eq!(pluralize("vi", "user").unwrap(), vec!["user"]);
+    }
+
+    #[test]
+    fn test_wa() {
+        let result = pluralize("wa", "utilisateur").unwrap();
+        assert!(result.iter().any(|v| v == "utilisateurs"));
     }
 
     #[test]

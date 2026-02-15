@@ -1,6 +1,7 @@
 //! Swahili (sw) inflection rules.
 //!
-//! Also used for Kinyarwanda (rw) and Shona (sn).
+//! Also used for Kongo (kg), Kikuyu (ki), Kuanyama (kj), Luganda (lg), Luba-Katanga (lu),
+//! Chichewa (ny), Kinyarwanda (rw), and Shona (sn).
 
 use alloc::borrow::Cow;
 use alloc::format;

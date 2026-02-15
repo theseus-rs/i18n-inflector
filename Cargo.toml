@@ -33,3 +33,4 @@ result_large_err = "allow"
 
 [workspace.dependencies]
 criterion = "0.8.2"
+phf = { version = "0.13.1", default-features = false }

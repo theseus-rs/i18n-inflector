@@ -1,6 +1,6 @@
 //! Hindi (hi) inflection rules.
 //!
-//! Also used for Bengali (bn).
+//! Also used for Bengali (bn) and Divehi (dv).
 
 use alloc::borrow::Cow;
 use alloc::format;
@@ -62,6 +62,12 @@ mod tests {
     }
 
     #[test]
+    fn test_singularize_suffix_only_inputs() {
+        assert_eq!(singularize("on"), "on");
+        assert_eq!(singularize("en"), "en");
+    }
+
+    #[test]
     fn test_pluralize() {
         let result = pluralize("upyogakarta");
         assert!(result.iter().any(|v| v == "upyogakartaon"));
@@ -71,5 +77,7 @@ mod tests {
     #[test]
     fn test_empty() {
         assert_eq!(singularize(""), "");
+        let result = pluralize("");
+        assert_eq!(result.len(), 2);
     }
 }
