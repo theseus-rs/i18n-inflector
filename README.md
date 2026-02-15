@@ -1,4 +1,4 @@
-# i18n Inflector
+# i18n_inflector
 
 [![Documentation](https://docs.rs/i18n_inflector/badge.svg)](https://docs.rs/i18n_inflector)
 [![Code Coverage](https://codecov.io/gh/theseus-rs/i18n-inflector/branch/main/graph/badge.svg)](https://codecov.io/gh/theseus-rs/i18n-inflector)
@@ -10,67 +10,154 @@ i18n_inflector is a Rust crate that provides a comprehensive set of inflection r
 you to easily convert words between different forms (e.g., singular to plural, plural to singular) in an
 internationalized context.
 
-## Getting Started
-
-Add `i18n_inflector` to your `Cargo.toml`:
-
-```toml
-[dependencies]
-i18n_inflector = "0.1"
-```
-
-### Usage
+## Example
 
 ```rust
 use i18n_inflector::{singularize, pluralize};
 
-// English
+// Singularize
 assert_eq!(singularize("en", "users").unwrap(), "user");
-assert_eq!(singularize("en", "categories").unwrap(), "category");
-
-let plurals = pluralize("en", "user").unwrap();
-assert!(plurals.contains(&"users".to_string()));
-
-// Spanish
 assert_eq!(singularize("es", "ciudades").unwrap(), "ciudad");
 
-// French
-assert_eq!(singularize("fr", "journaux").unwrap(), "journal");
-
-// Japanese (no morphological plural)
-assert_eq!(singularize("ja", "user").unwrap(), "user");
+// Pluralize
+let plurals = pluralize("en", "user").unwrap();
+assert!(plurals.contains(&"users".to_string()));
 
 // Unsupported locale returns an error
 assert!(singularize("xx", "users").is_err());
 ```
 
-The first argument is always an ISO 639 two-letter language code. If the locale
-is not recognized, English rules are used as a fallback.
+## Supported Languages
 
-### Supported Languages
+The following ISO 639-1 language codes are supported:
 
-| Code | Language   | Code | Language   | Code | Language   |
-|------|-----------|------|-----------|------|-----------|
-| ar   | Arabic    | ga   | Irish     | mt   | Maltese   |
-| be   | Belarusian| he   | Hebrew    | nl   | Dutch     |
-| bg   | Bulgarian | hi   | Hindi     | no   | Norwegian |
-| bn   | Bengali   | hr   | Croatian  | pl   | Polish    |
-| cs   | Czech     | hu   | Hungarian | pt   | Portuguese|
-| da   | Danish    | is   | Icelandic | ro   | Romanian  |
-| de   | German    | it   | Italian   | ru   | Russian   |
-| el   | Greek     | ja   | Japanese  | sk   | Slovak    |
-| en   | English   | jv   | Javanese  | sl   | Slovenian |
-| es   | Spanish   | ka   | Georgian  | sq   | Albanian  |
-| et   | Estonian  | ko   | Korean    | sr   | Serbian   |
-| fi   | Finnish   | lt   | Lithuanian| sv   | Swedish   |
-| fr   | French    | lv   | Latvian   | th   | Thai      |
-| tr   | Turkish   | uk   | Ukrainian | vi   | Vietnamese|
-| mk   | Macedonian| ms   | Malay     | yi   | Yiddish   |
-| zh   | Chinese   |      |           |      |           |
-
-See the [`examples/basic_usage`](examples/basic_usage) directory for a
-runnable example.
-
+| Code | Language          |
+|------|-------------------|
+| af   | Afrikaans         |
+| am   | Amharic           |
+| an   | Aragonese         |
+| ar   | Arabic            |
+| as   | Assamese          |
+| az   | Azerbaijani       |
+| be   | Belarusian        |
+| bg   | Bulgarian         |
+| bn   | Bengali           |
+| bo   | Tibetan           |
+| br   | Breton            |
+| bs   | Bosnian           |
+| ca   | Catalan           |
+| co   | Corsican          |
+| cs   | Czech             |
+| cy   | Welsh             |
+| da   | Danish            |
+| de   | German            |
+| el   | Greek             |
+| en   | English           |
+| eo   | Esperanto         |
+| es   | Spanish           |
+| et   | Estonian          |
+| eu   | Basque            |
+| fa   | Persian           |
+| fi   | Finnish           |
+| fo   | Faroese           |
+| fr   | French            |
+| fy   | Western Frisian   |
+| ga   | Irish             |
+| gd   | Scottish Gaelic   |
+| gl   | Galician          |
+| gu   | Gujarati          |
+| gv   | Manx              |
+| ha   | Hausa             |
+| he   | Hebrew            |
+| hi   | Hindi             |
+| hr   | Croatian          |
+| ht   | Haitian Creole    |
+| hu   | Hungarian         |
+| hy   | Armenian          |
+| id   | Indonesian        |
+| ig   | Igbo              |
+| is   | Icelandic         |
+| it   | Italian           |
+| ja   | Japanese          |
+| jv   | Javanese          |
+| ka   | Georgian          |
+| kk   | Kazakh            |
+| km   | Khmer             |
+| kn   | Kannada           |
+| ko   | Korean            |
+| ku   | Kurdish           |
+| kw   | Cornish           |
+| ky   | Kyrgyz            |
+| la   | Latin             |
+| lb   | Luxembourgish     |
+| lo   | Lao               |
+| lt   | Lithuanian        |
+| lv   | Latvian           |
+| mg   | Malagasy          |
+| mi   | Māori             |
+| mk   | Macedonian        |
+| ml   | Malayalam         |
+| mn   | Mongolian         |
+| mr   | Marathi           |
+| ms   | Malay             |
+| mt   | Maltese           |
+| my   | Burmese           |
+| nb   | Norwegian Bokmål  |
+| nd   | Northern Ndebele  |
+| ne   | Nepali            |
+| nl   | Dutch             |
+| nn   | Norwegian Nynorsk |
+| no   | Norwegian         |
+| nr   | Southern Ndebele  |
+| oc   | Occitan           |
+| or   | Odia              |
+| pa   | Punjabi           |
+| pl   | Polish            |
+| ps   | Pashto            |
+| pt   | Portuguese        |
+| qu   | Quechua           |
+| rm   | Romansh           |
+| ro   | Romanian          |
+| ru   | Russian           |
+| rw   | Kinyarwanda       |
+| sc   | Sardinian         |
+| sd   | Sindhi            |
+| si   | Sinhala           |
+| sk   | Slovak            |
+| sl   | Slovenian         |
+| sm   | Samoan            |
+| sn   | Shona             |
+| so   | Somali            |
+| sq   | Albanian          |
+| sr   | Serbian           |
+| ss   | Swati             |
+| st   | Southern Sotho    |
+| su   | Sundanese         |
+| sv   | Swedish           |
+| sw   | Swahili           |
+| ta   | Tamil             |
+| te   | Telugu            |
+| tg   | Tajik             |
+| th   | Thai              |
+| ti   | Tigrinya          |
+| tk   | Turkmen           |
+| tl   | Tagalog           |
+| tn   | Tswana            |
+| tr   | Turkish           |
+| ts   | Tsonga            |
+| tt   | Tatar             |
+| ug   | Uyghur            |
+| uk   | Ukrainian         |
+| ur   | Urdu              |
+| uz   | Uzbek             |
+| ve   | Venda             |
+| vi   | Vietnamese        |
+| wo   | Wolof             |
+| xh   | Xhosa             |
+| yi   | Yiddish           |
+| yo   | Yoruba            |
+| zh   | Chinese           |
+| zu   | Zulu              |
 
 ## License
 
