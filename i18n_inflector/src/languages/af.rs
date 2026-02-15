@@ -1,21 +1,20 @@
 //! Afrikaans (af) inflection rules.
 
+use crate::language_rules::LanguageRuleSet;
 use alloc::borrow::Cow;
 use alloc::format;
 use alloc::vec;
 use alloc::vec::Vec;
 
+pub(crate) static RULES: LanguageRuleSet = LanguageRuleSet {
+    language: "af",
+    singularize_fn: singularize,
+    pluralize_fn: pluralize,
+};
+
 /// Converts a plural Afrikaans noun to its singular form.
 ///
 /// Handles `-e` and `-s` plural suffixes.
-///
-/// # Examples
-///
-/// ```
-/// # use i18n_inflector::singularize;
-/// assert_eq!(singularize("af", "honde").unwrap(), "hond");
-/// assert_eq!(singularize("af", "motors").unwrap(), "motor");
-/// ```
 pub(crate) fn singularize(name: &str) -> Cow<'_, str> {
     if let Some(stem) = name.strip_suffix('e')
         && !stem.is_empty()
@@ -31,14 +30,6 @@ pub(crate) fn singularize(name: &str) -> Cow<'_, str> {
 }
 
 /// Returns a list of possible plural forms for an Afrikaans noun.
-///
-/// # Examples
-///
-/// ```
-/// # use i18n_inflector::pluralize;
-/// let result = pluralize("af", "kat").unwrap();
-/// assert!(result.iter().any(|v| v == "kate"));
-/// ```
 pub(crate) fn pluralize(name: &str) -> Vec<Cow<'_, str>> {
     vec![format!("{name}e").into(), format!("{name}s").into()]
 }

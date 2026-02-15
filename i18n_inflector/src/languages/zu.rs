@@ -6,21 +6,21 @@
 //! Bantu languages use prefix-based noun classes. This module handles common suffixes found in
 //! Latin transliterations.
 
+use crate::language_rules::LanguageRuleSet;
 use alloc::borrow::Cow;
 use alloc::format;
 use alloc::vec;
 use alloc::vec::Vec;
 
+pub(crate) static RULES: LanguageRuleSet = LanguageRuleSet {
+    language: "zu",
+    singularize_fn: singularize,
+    pluralize_fn: pluralize,
+};
+
 /// Converts a plural Bantu noun to its singular form.
 ///
 /// Handles the `-ni` plural/locative suffix.
-///
-/// # Examples
-///
-/// ```
-/// # use i18n_inflector::singularize;
-/// assert_eq!(singularize("zu", "izincwadini").unwrap(), "izincwadi");
-/// ```
 pub(crate) fn singularize(name: &str) -> Cow<'_, str> {
     if let Some(stem) = name.strip_suffix("ni")
         && !stem.is_empty()
@@ -31,14 +31,6 @@ pub(crate) fn singularize(name: &str) -> Cow<'_, str> {
 }
 
 /// Returns a list of possible plural forms for a Bantu noun.
-///
-/// # Examples
-///
-/// ```
-/// # use i18n_inflector::pluralize;
-/// let result = pluralize("zu", "incwadi").unwrap();
-/// assert!(result.iter().any(|v| v == "incwadini"));
-/// ```
 pub(crate) fn pluralize(name: &str) -> Vec<Cow<'_, str>> {
     vec![format!("{name}ini").into(), format!("{name}ni").into()]
 }

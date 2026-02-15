@@ -1,22 +1,21 @@
 //! Spanish (es) inflection rules.
 
+use crate::language_rules::LanguageRuleSet;
 use alloc::borrow::Cow;
 use alloc::format;
 use alloc::vec;
 use alloc::vec::Vec;
 
+pub(crate) static RULES: LanguageRuleSet = LanguageRuleSet {
+    language: "es",
+    singularize_fn: singularize,
+    pluralize_fn: pluralize,
+};
+
 /// Converts a plural Spanish noun to its singular form.
 ///
 /// Handles `-es` plurals for words ending in consonants (`d`, `r`, `n`, `l`, `z`, `j`, `s`) and
 /// regular `-s` plurals.
-///
-/// # Examples
-///
-/// ```
-/// # use i18n_inflector::singularize;
-/// assert_eq!(singularize("es", "usuarios").unwrap(), "usuario");
-/// assert_eq!(singularize("es", "ciudades").unwrap(), "ciudad");
-/// ```
 pub(crate) fn singularize(name: &str) -> Cow<'_, str> {
     if let Some(stem) = name.strip_suffix("es")
         && (stem.ends_with('d')
@@ -38,14 +37,6 @@ pub(crate) fn singularize(name: &str) -> Cow<'_, str> {
 }
 
 /// Returns a list of possible plural forms for a Spanish noun.
-///
-/// # Examples
-///
-/// ```
-/// # use i18n_inflector::pluralize;
-/// let result = pluralize("es", "usuario").unwrap();
-/// assert!(result.iter().any(|v| v == "usuarios"));
-/// ```
 pub(crate) fn pluralize(name: &str) -> Vec<Cow<'_, str>> {
     let mut candidates = vec![format!("{name}s").into()];
     if name.ends_with('d')

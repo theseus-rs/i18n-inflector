@@ -1,21 +1,20 @@
 //! German (de) inflection rules.
 
+use crate::language_rules::LanguageRuleSet;
 use alloc::borrow::Cow;
 use alloc::format;
 use alloc::vec;
 use alloc::vec::Vec;
 
+pub(crate) static RULES: LanguageRuleSet = LanguageRuleSet {
+    language: "de",
+    singularize_fn: singularize,
+    pluralize_fn: pluralize,
+};
+
 /// Converts a plural German noun to its singular form.
 ///
 /// Handles common German plural suffixes: `-en`, `-er`, `-e`, `-n`, `-s`.
-///
-/// # Examples
-///
-/// ```
-/// # use i18n_inflector::singularize;
-/// assert_eq!(singularize("de", "kunden").unwrap(), "kund");
-/// assert_eq!(singularize("de", "produkte").unwrap(), "produkt");
-/// ```
 pub(crate) fn singularize(name: &str) -> Cow<'_, str> {
     if let Some(stem) = name.strip_suffix("en")
         && !stem.is_empty()
@@ -46,14 +45,6 @@ pub(crate) fn singularize(name: &str) -> Cow<'_, str> {
 }
 
 /// Returns a list of possible plural forms for a German noun.
-///
-/// # Examples
-///
-/// ```
-/// # use i18n_inflector::pluralize;
-/// let result = pluralize("de", "produkt").unwrap();
-/// assert!(result.iter().any(|v| v == "produkte"));
-/// ```
 pub(crate) fn pluralize(name: &str) -> Vec<Cow<'_, str>> {
     vec![
         format!("{name}e").into(),

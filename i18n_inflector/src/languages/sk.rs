@@ -1,5 +1,11 @@
 //! Slovak (sk) inflection rules.
-//!
-//! Uses the same rules as Czech. See [`super::cs`] for the implementation.
+
+use crate::language_rules::LanguageRuleSet;
 
 pub(crate) use super::cs::{pluralize, singularize};
+
+pub(crate) static RULES: LanguageRuleSet = LanguageRuleSet {
+    language: "sk",
+    singularize_fn: singularize,
+    pluralize_fn: pluralize,
+};

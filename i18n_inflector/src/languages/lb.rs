@@ -1,5 +1,11 @@
 //! Luxembourgish (lb) inflection rules.
-//!
-//! Uses the same rules as German. See [`super::de`] for the implementation.
+
+use crate::language_rules::LanguageRuleSet;
 
 pub(crate) use super::de::{pluralize, singularize};
+
+pub(crate) static RULES: LanguageRuleSet = LanguageRuleSet {
+    language: "lb",
+    singularize_fn: singularize,
+    pluralize_fn: pluralize,
+};

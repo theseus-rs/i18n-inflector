@@ -1,21 +1,20 @@
 //! Portuguese (pt) inflection rules.
 
+use crate::language_rules::LanguageRuleSet;
 use alloc::borrow::Cow;
 use alloc::format;
 use alloc::vec;
 use alloc::vec::Vec;
 
+pub(crate) static RULES: LanguageRuleSet = LanguageRuleSet {
+    language: "pt",
+    singularize_fn: singularize,
+    pluralize_fn: pluralize,
+};
+
 /// Converts a plural Portuguese noun to its singular form.
 ///
 /// Handles `-es` plurals for consonant-ending words and regular `-s` plurals.
-///
-/// # Examples
-///
-/// ```
-/// # use i18n_inflector::singularize;
-/// assert_eq!(singularize("pt", "produtos").unwrap(), "produto");
-/// assert_eq!(singularize("pt", "flores").unwrap(), "flor");
-/// ```
 pub(crate) fn singularize(name: &str) -> Cow<'_, str> {
     if let Some(stem) = name.strip_suffix("es")
         && (stem.ends_with('r')
@@ -35,14 +34,6 @@ pub(crate) fn singularize(name: &str) -> Cow<'_, str> {
 }
 
 /// Returns a list of possible plural forms for a Portuguese noun.
-///
-/// # Examples
-///
-/// ```
-/// # use i18n_inflector::pluralize;
-/// let result = pluralize("pt", "produto").unwrap();
-/// assert!(result.iter().any(|v| v == "produtos"));
-/// ```
 pub(crate) fn pluralize(name: &str) -> Vec<Cow<'_, str>> {
     let mut candidates = vec![format!("{name}s").into()];
     if name.ends_with('r')

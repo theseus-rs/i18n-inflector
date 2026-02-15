@@ -1,5 +1,11 @@
 //! Tatar (tt) inflection rules.
-//!
-//! Uses the same rules as Turkish. See [`super::tr`] for the implementation.
+
+use crate::language_rules::LanguageRuleSet;
 
 pub(crate) use super::tr::{pluralize, singularize};
+
+pub(crate) static RULES: LanguageRuleSet = LanguageRuleSet {
+    language: "tt",
+    singularize_fn: singularize,
+    pluralize_fn: pluralize,
+};

@@ -13,26 +13,27 @@ internationalized context.
 ## Example
 
 ```rust
-use i18n_inflector::{singularize, pluralize};
+use i18n_inflector::{language_rules, LanguageRules};
 
 // English
-assert_eq!(singularize("en", "users").unwrap(), "user");
-assert_eq!(singularize("en", "categories").unwrap(), "category");
+let en = language_rules("en").unwrap();
+assert_eq!(en.singularize("users"), "user");
+assert_eq!(en.singularize("categories"), "category");
 
-let plurals = pluralize("en", "user").unwrap();
+let plurals = en.pluralize("user");
 assert!(plurals.iter().any(|v| v == "users"));
 
 // Spanish
-assert_eq!(singularize("es", "ciudades").unwrap(), "ciudad");
+assert_eq!(language_rules("es").unwrap().singularize("ciudades"), "ciudad");
 
 // French
-assert_eq!(singularize("fr", "journaux").unwrap(), "journal");
+assert_eq!(language_rules("fr").unwrap().singularize("journaux"), "journal");
 
 // Japanese
-assert_eq!(singularize("ja", "user").unwrap(), "user");
+assert_eq!(language_rules("ja").unwrap().singularize("user"), "user");
 
 // Unsupported locale returns an error
-assert!(singularize("xx", "users").is_err());
+assert!(language_rules("xx").is_err());
 ```
 
 ## Supported Languages

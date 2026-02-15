@@ -1,19 +1,19 @@
 //! Latvian (lv) inflection rules.
 
+use crate::language_rules::LanguageRuleSet;
 use alloc::borrow::Cow;
 use alloc::format;
 use alloc::vec::Vec;
 
+pub(crate) static RULES: LanguageRuleSet = LanguageRuleSet {
+    language: "lv",
+    singularize_fn: singularize,
+    pluralize_fn: pluralize,
+};
+
 /// Converts a plural Latvian noun to its singular form.
 ///
 /// Handles `-i` -> `-s` and `-as` -> `-a` transformations.
-///
-/// # Examples
-///
-/// ```
-/// # use i18n_inflector::singularize;
-/// assert_eq!(singularize("lv", "lietotaji").unwrap(), "lietotajs");
-/// ```
 pub(crate) fn singularize(name: &str) -> Cow<'_, str> {
     if let Some(stem) = name.strip_suffix('i')
         && !stem.is_empty()
@@ -29,14 +29,6 @@ pub(crate) fn singularize(name: &str) -> Cow<'_, str> {
 }
 
 /// Returns a list of possible plural forms for a Latvian noun.
-///
-/// # Examples
-///
-/// ```
-/// # use i18n_inflector::pluralize;
-/// let result = pluralize("lv", "lietotajs").unwrap();
-/// assert!(result.iter().any(|v| v == "lietotaji"));
-/// ```
 pub(crate) fn pluralize(name: &str) -> Vec<Cow<'_, str>> {
     let mut candidates = Vec::new();
     if let Some(stem) = name.strip_suffix('s') {

@@ -1,5 +1,11 @@
 //! Faroese (fo) inflection rules.
-//!
-//! Uses the same rules as Icelandic. See [`super::is`] for the implementation.
+
+use crate::language_rules::LanguageRuleSet;
 
 pub(crate) use super::is::{pluralize, singularize};
+
+pub(crate) static RULES: LanguageRuleSet = LanguageRuleSet {
+    language: "fo",
+    singularize_fn: singularize,
+    pluralize_fn: pluralize,
+};

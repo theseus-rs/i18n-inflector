@@ -1,5 +1,11 @@
 //! Tigrinya (ti) inflection rules.
-//!
-//! Uses the same rules as Amharic. See [`super::am`] for the implementation.
+
+use crate::language_rules::LanguageRuleSet;
 
 pub(crate) use super::am::{pluralize, singularize};
+
+pub(crate) static RULES: LanguageRuleSet = LanguageRuleSet {
+    language: "ti",
+    singularize_fn: singularize,
+    pluralize_fn: pluralize,
+};

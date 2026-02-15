@@ -1,21 +1,21 @@
 //! Hungarian (hu) inflection rules.
 
+use crate::language_rules::LanguageRuleSet;
 use alloc::borrow::Cow;
 use alloc::format;
 use alloc::vec;
 use alloc::vec::Vec;
 
+pub(crate) static RULES: LanguageRuleSet = LanguageRuleSet {
+    language: "hu",
+    singularize_fn: singularize,
+    pluralize_fn: pluralize,
+};
+
 /// Converts a plural Hungarian noun to its singular form.
 ///
 /// Hungarian plurals end in `-k`, often with a linking vowel (`-ok`, `-ek`,
 /// `-ök`).
-///
-/// # Examples
-///
-/// ```
-/// # use i18n_inflector::singularize;
-/// assert_eq!(singularize("hu", "felhasznalok").unwrap(), "felhasznalo");
-/// ```
 pub(crate) fn singularize(name: &str) -> Cow<'_, str> {
     if let Some(stem) = name.strip_suffix('k')
         && !stem.is_empty()
@@ -26,14 +26,6 @@ pub(crate) fn singularize(name: &str) -> Cow<'_, str> {
 }
 
 /// Returns a list of possible plural forms for a Hungarian noun.
-///
-/// # Examples
-///
-/// ```
-/// # use i18n_inflector::pluralize;
-/// let result = pluralize("hu", "felhasznalo").unwrap();
-/// assert!(result.iter().any(|v| v == "felhasznalok"));
-/// ```
 pub(crate) fn pluralize(name: &str) -> Vec<Cow<'_, str>> {
     vec![
         format!("{name}k").into(),

@@ -1,20 +1,19 @@
 //! Italian (it) inflection rules.
 
+use crate::language_rules::LanguageRuleSet;
 use alloc::borrow::Cow;
 use alloc::format;
 use alloc::vec::Vec;
 
+pub(crate) static RULES: LanguageRuleSet = LanguageRuleSet {
+    language: "it",
+    singularize_fn: singularize,
+    pluralize_fn: pluralize,
+};
+
 /// Converts a plural Italian noun to its singular form.
 ///
 /// Handles masculine `-i` -> `-o` and feminine `-e` -> `-a` transformations.
-///
-/// # Examples
-///
-/// ```
-/// # use i18n_inflector::singularize;
-/// assert_eq!(singularize("it", "prodotti").unwrap(), "prodotto");
-/// assert_eq!(singularize("it", "aziende").unwrap(), "azienda");
-/// ```
 pub(crate) fn singularize(name: &str) -> Cow<'_, str> {
     if let Some(stem) = name.strip_suffix('i')
         && !stem.is_empty()
@@ -30,14 +29,6 @@ pub(crate) fn singularize(name: &str) -> Cow<'_, str> {
 }
 
 /// Returns a list of possible plural forms for an Italian noun.
-///
-/// # Examples
-///
-/// ```
-/// # use i18n_inflector::pluralize;
-/// let result = pluralize("it", "prodotto").unwrap();
-/// assert!(result.iter().any(|v| v == "prodotti"));
-/// ```
 pub(crate) fn pluralize(name: &str) -> Vec<Cow<'_, str>> {
     let mut candidates = Vec::new();
     if let Some(stem) = name.strip_suffix('o') {

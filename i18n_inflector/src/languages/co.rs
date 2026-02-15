@@ -1,5 +1,11 @@
 //! Corsican (co) inflection rules.
-//!
-//! Uses the same rules as Italian. See [`super::it`] for the implementation.
+
+use crate::language_rules::LanguageRuleSet;
 
 pub(crate) use super::it::{pluralize, singularize};
+
+pub(crate) static RULES: LanguageRuleSet = LanguageRuleSet {
+    language: "co",
+    singularize_fn: singularize,
+    pluralize_fn: pluralize,
+};

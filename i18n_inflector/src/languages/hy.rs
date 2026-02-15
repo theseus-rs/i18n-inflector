@@ -1,21 +1,20 @@
 //! Armenian (hy) inflection rules.
 
+use crate::language_rules::LanguageRuleSet;
 use alloc::borrow::Cow;
 use alloc::format;
 use alloc::vec;
 use alloc::vec::Vec;
 
+pub(crate) static RULES: LanguageRuleSet = LanguageRuleSet {
+    language: "hy",
+    singularize_fn: singularize,
+    pluralize_fn: pluralize,
+};
+
 /// Converts a plural Armenian noun (Latin transliteration) to its singular form.
 ///
 /// Handles `-ner` and `-er` plural suffixes.
-///
-/// # Examples
-///
-/// ```
-/// # use i18n_inflector::singularize;
-/// assert_eq!(singularize("hy", "girqer").unwrap(), "girq");
-/// assert_eq!(singularize("hy", "txaner").unwrap(), "txa");
-/// ```
 pub(crate) fn singularize(name: &str) -> Cow<'_, str> {
     if let Some(stem) = name.strip_suffix("ner")
         && !stem.is_empty()
@@ -31,14 +30,6 @@ pub(crate) fn singularize(name: &str) -> Cow<'_, str> {
 }
 
 /// Returns a list of possible plural forms for an Armenian noun (Latin transliteration).
-///
-/// # Examples
-///
-/// ```
-/// # use i18n_inflector::pluralize;
-/// let result = pluralize("hy", "girq").unwrap();
-/// assert!(result.iter().any(|v| v == "girqer"));
-/// ```
 pub(crate) fn pluralize(name: &str) -> Vec<Cow<'_, str>> {
     vec![format!("{name}ner").into(), format!("{name}er").into()]
 }

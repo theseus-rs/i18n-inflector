@@ -1,25 +1,23 @@
 //! Croatian (hr) inflection rules.
 //!
-//! Also used for Serbian (sr), Slovenian (sl), Macedonian (mk), and
-//! Bulgarian (bg).
+//! Also used for Serbian (sr), Slovenian (sl), Macedonian (mk), and Bulgarian (bg).
 
+use crate::language_rules::LanguageRuleSet;
 use alloc::borrow::Cow;
 use alloc::format;
 use alloc::vec;
 use alloc::vec::Vec;
 
+pub(crate) static RULES: LanguageRuleSet = LanguageRuleSet {
+    language: "hr",
+    singularize_fn: singularize,
+    pluralize_fn: pluralize,
+};
+
 /// Converts a plural South Slavic noun to its singular form.
 ///
 /// Handles `-ovi`, `-evi`, `-ci` -> `-k`, `-i`, and `-a` plural suffixes common across Croatian,
 /// Serbian, Slovenian, Macedonian, and Bulgarian.
-///
-/// # Examples
-///
-/// ```
-/// # use i18n_inflector::singularize;
-/// assert_eq!(singularize("hr", "korisnici").unwrap(), "korisnik");
-/// assert_eq!(singularize("bg", "produkti").unwrap(), "produkt");
-/// ```
 pub(crate) fn singularize(name: &str) -> Cow<'_, str> {
     if let Some(stem) = name.strip_suffix("ovi")
         && !stem.is_empty()
@@ -50,14 +48,6 @@ pub(crate) fn singularize(name: &str) -> Cow<'_, str> {
 }
 
 /// Returns a list of possible plural forms for a South Slavic noun.
-///
-/// # Examples
-///
-/// ```
-/// # use i18n_inflector::pluralize;
-/// let result = pluralize("hr", "korisnik").unwrap();
-/// assert!(result.iter().any(|v| v == "korisnici"));
-/// ```
 pub(crate) fn pluralize(name: &str) -> Vec<Cow<'_, str>> {
     let mut candidates = vec![
         format!("{name}i").into(),

@@ -1,21 +1,20 @@
 //! Catalan (ca) inflection rules.
 
+use crate::language_rules::LanguageRuleSet;
 use alloc::borrow::Cow;
 use alloc::format;
 use alloc::vec;
 use alloc::vec::Vec;
 
+pub(crate) static RULES: LanguageRuleSet = LanguageRuleSet {
+    language: "ca",
+    singularize_fn: singularize,
+    pluralize_fn: pluralize,
+};
+
 /// Converts a plural Catalan noun to its singular form.
 ///
 /// Handles `-es` (after consonant), `-ns`, and `-s` plural suffixes.
-///
-/// # Examples
-///
-/// ```
-/// # use i18n_inflector::singularize;
-/// assert_eq!(singularize("ca", "gats").unwrap(), "gat");
-/// assert_eq!(singularize("ca", "ciutats").unwrap(), "ciutat");
-/// ```
 pub(crate) fn singularize(name: &str) -> Cow<'_, str> {
     if let Some(stem) = name.strip_suffix("es")
         && (stem.ends_with('r')
@@ -40,14 +39,6 @@ pub(crate) fn singularize(name: &str) -> Cow<'_, str> {
 }
 
 /// Returns a list of possible plural forms for a Catalan noun.
-///
-/// # Examples
-///
-/// ```
-/// # use i18n_inflector::pluralize;
-/// let result = pluralize("ca", "gat").unwrap();
-/// assert!(result.iter().any(|v| v == "gats"));
-/// ```
 pub(crate) fn pluralize(name: &str) -> Vec<Cow<'_, str>> {
     let mut candidates = vec![format!("{name}s").into()];
     if name.ends_with('r')

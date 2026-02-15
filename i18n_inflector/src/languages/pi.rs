@@ -1,5 +1,11 @@
 //! Pali (pi) inflection rules.
-//!
-//! Pali does not mark plurality on nouns. See [`super::ja`] for the implementation.
+
+use crate::language_rules::LanguageRuleSet;
 
 pub(crate) use super::ja::{pluralize, singularize};
+
+pub(crate) static RULES: LanguageRuleSet = LanguageRuleSet {
+    language: "pi",
+    singularize_fn: singularize,
+    pluralize_fn: pluralize,
+};

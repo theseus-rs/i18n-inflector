@@ -5,21 +5,51 @@ use alloc::format;
 use alloc::vec;
 use alloc::vec::Vec;
 
+use crate::language_rules::LanguageRuleSet;
+
+/// Irregular plural -> singular mappings.
+static EXCEPTIONS_PLURAL_TO_SINGULAR: &[(&str, &str)] = &[
+    ("children", "child"),
+    ("geese", "goose"),
+    ("men", "man"),
+    ("mice", "mouse"),
+    ("oxen", "ox"),
+    ("people", "person"),
+    ("teeth", "tooth"),
+    ("women", "woman"),
+];
+
+/// Irregular singular -> plural mappings.
+static EXCEPTIONS_SINGULAR_TO_PLURAL: &[(&str, &str)] = &[
+    ("child", "children"),
+    ("goose", "geese"),
+    ("man", "men"),
+    ("mouse", "mice"),
+    ("ox", "oxen"),
+    ("person", "people"),
+    ("tooth", "teeth"),
+    ("woman", "women"),
+];
+
+pub(crate) static RULES: LanguageRuleSet = LanguageRuleSet {
+    language: "en",
+    singularize_fn: singularize,
+    pluralize_fn: pluralize,
+};
+
 /// Converts a plural English noun to its singular form.
 ///
-/// Handles regular `-s` plurals, `-es` plurals (for words ending in `x`, `ch`, `sh`, `z`), `-ies`
-/// plurals, and `-sses` plurals.
-///
-/// # Examples
-///
-/// ```
-/// # use i18n_inflector::singularize;
-/// assert_eq!(singularize("en", "users").unwrap(), "user");
-/// assert_eq!(singularize("en", "categories").unwrap(), "category");
-/// assert_eq!(singularize("en", "boxes").unwrap(), "box");
-/// assert_eq!(singularize("en", "addresses").unwrap(), "address");
-/// ```
+/// Handles irregular exceptions (e.g., children -> child, oxen -> ox) before falling back to
+/// regular suffix rules: `-s`, `-es`, `-ies`, `-sses`.
 pub(crate) fn singularize(name: &str) -> Cow<'_, str> {
+    // Check exceptions first
+    for &(plural, singular) in EXCEPTIONS_PLURAL_TO_SINGULAR {
+        if name == plural {
+            return Cow::Borrowed(singular);
+        }
+    }
+
+    // Algorithmic suffix rules
     if let Some(stem) = name.strip_suffix("ies")
         && !stem.is_empty()
     {
@@ -52,20 +82,16 @@ pub(crate) fn singularize(name: &str) -> Cow<'_, str> {
 
 /// Returns a list of possible plural forms for an English noun.
 ///
-/// Generates candidates with `-s`, `-es`, and `-ies` (for words ending in `y`)
-/// suffixes.
-///
-/// # Examples
-///
-/// ```
-/// # use i18n_inflector::pluralize;
-/// let result = pluralize("en", "user").unwrap();
-/// assert!(result.iter().any(|v| v == "users"));
-///
-/// let result = pluralize("en", "category").unwrap();
-/// assert!(result.iter().any(|v| v == "categories"));
-/// ```
+/// Checks irregular exceptions first (e.g., child -> children), then generates candidates with
+/// `-s`, `-es`, and `-ies` suffixes.
 pub(crate) fn pluralize(name: &str) -> Vec<Cow<'_, str>> {
+    // Check exceptions first
+    for &(singular, plural) in EXCEPTIONS_SINGULAR_TO_PLURAL {
+        if name == singular {
+            return vec![Cow::Borrowed(plural)];
+        }
+    }
+
     let mut candidates = vec![format!("{name}s").into(), format!("{name}es").into()];
     if let Some(stem) = name.strip_suffix('y')
         && !stem.is_empty()
@@ -78,6 +104,26 @@ pub(crate) fn pluralize(name: &str) -> Vec<Cow<'_, str>> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::language_rules::LanguageRules;
+
+    #[test]
+    fn test_rules_language() {
+        assert_eq!(RULES.language(), "en");
+    }
+
+    #[test]
+    fn test_rules_singularize() {
+        assert_eq!(RULES.singularize("users"), "user");
+        assert_eq!(RULES.singularize("children"), "child");
+    }
+
+    #[test]
+    fn test_rules_pluralize() {
+        let result = RULES.pluralize("user");
+        assert!(result.iter().any(|v| v == "users"));
+        let result = RULES.pluralize("child");
+        assert_eq!(result, vec!["children"]);
+    }
 
     #[test]
     fn test_singularize_regular_s() {
@@ -126,6 +172,18 @@ mod tests {
     }
 
     #[test]
+    fn test_singularize_exceptions() {
+        assert_eq!(singularize("children"), "child");
+        assert_eq!(singularize("oxen"), "ox");
+        assert_eq!(singularize("men"), "man");
+        assert_eq!(singularize("women"), "woman");
+        assert_eq!(singularize("mice"), "mouse");
+        assert_eq!(singularize("geese"), "goose");
+        assert_eq!(singularize("teeth"), "tooth");
+        assert_eq!(singularize("people"), "person");
+    }
+
+    #[test]
     fn test_pluralize() {
         let result = pluralize("user");
         assert!(result.iter().any(|v| v == "users"));
@@ -152,5 +210,32 @@ mod tests {
     fn test_pluralize_empty() {
         let result = pluralize("");
         assert!(result.iter().any(|v| v == "s"));
+    }
+
+    #[test]
+    fn test_pluralize_exceptions() {
+        let result = pluralize("child");
+        assert_eq!(result, vec!["children"]);
+
+        let result = pluralize("ox");
+        assert_eq!(result, vec!["oxen"]);
+
+        let result = pluralize("man");
+        assert_eq!(result, vec!["men"]);
+
+        let result = pluralize("woman");
+        assert_eq!(result, vec!["women"]);
+
+        let result = pluralize("mouse");
+        assert_eq!(result, vec!["mice"]);
+
+        let result = pluralize("goose");
+        assert_eq!(result, vec!["geese"]);
+
+        let result = pluralize("tooth");
+        assert_eq!(result, vec!["teeth"]);
+
+        let result = pluralize("person");
+        assert_eq!(result, vec!["people"]);
     }
 }

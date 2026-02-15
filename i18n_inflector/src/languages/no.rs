@@ -1,5 +1,11 @@
 //! Norwegian (no) inflection rules.
-//!
-//! Uses the same rules as Danish. See [`super::da`] for the implementation.
+
+use crate::language_rules::LanguageRuleSet;
 
 pub(crate) use super::da::{pluralize, singularize};
+
+pub(crate) static RULES: LanguageRuleSet = LanguageRuleSet {
+    language: "no",
+    singularize_fn: singularize,
+    pluralize_fn: pluralize,
+};

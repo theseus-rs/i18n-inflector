@@ -1,19 +1,19 @@
 //! Lithuanian (lt) inflection rules.
 
+use crate::language_rules::LanguageRuleSet;
 use alloc::borrow::Cow;
 use alloc::format;
 use alloc::vec::Vec;
 
+pub(crate) static RULES: LanguageRuleSet = LanguageRuleSet {
+    language: "lt",
+    singularize_fn: singularize,
+    pluralize_fn: pluralize,
+};
+
 /// Converts a plural Lithuanian noun to its singular form.
 ///
 /// Handles `-ai` -> `-as`, `-os` -> `-a`, and `-es` -> `-e` transformations.
-///
-/// # Examples
-///
-/// ```
-/// # use i18n_inflector::singularize;
-/// assert_eq!(singularize("lt", "vartotojai").unwrap(), "vartotojas");
-/// ```
 pub(crate) fn singularize(name: &str) -> Cow<'_, str> {
     if let Some(stem) = name.strip_suffix("ai")
         && !stem.is_empty()
@@ -34,14 +34,6 @@ pub(crate) fn singularize(name: &str) -> Cow<'_, str> {
 }
 
 /// Returns a list of possible plural forms for a Lithuanian noun.
-///
-/// # Examples
-///
-/// ```
-/// # use i18n_inflector::pluralize;
-/// let result = pluralize("lt", "vartotojas").unwrap();
-/// assert!(result.iter().any(|v| v == "vartotojai"));
-/// ```
 pub(crate) fn pluralize(name: &str) -> Vec<Cow<'_, str>> {
     let mut candidates = Vec::new();
     if let Some(stem) = name.strip_suffix("as") {
