@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.1](https://github.com/theseus-rs/i18n-inflector/compare/v0.1.0...v0.1.1) - 2026-02-15
+
+### Other
+- update readme
+
 ## [0.1.0](https://github.com/theseus-rs/i18n-inflector/releases/tag/v0.1.0) - 2026-02-15
 
 ### Added
