@@ -15,25 +15,29 @@ internationalized context.
 ```rust
 use i18n_inflector::{language_rules, LanguageRules};
 
-// English
-let en = language_rules("en").unwrap();
-assert_eq!(en.singularize("users"), "user");
-assert_eq!(en.singularize("categories"), "category");
+fn main() -> i18n_inflector::Result<()> {
+    // English
+    let en = language_rules("en")?;
+    assert_eq!(en.singularize("users"), "user");
+    assert_eq!(en.singularize("categories"), "category");
 
-let plurals = en.pluralize("user");
-assert!(plurals.iter().any(|v| v == "users"));
+    let plurals = en.pluralize("user");
+    assert!(plurals.iter().any(|v| v == "users"));
 
-// Spanish
-assert_eq!(language_rules("es").unwrap().singularize("ciudades"), "ciudad");
+    // Spanish
+    assert_eq!(language_rules("es")?.singularize("ciudades"), "ciudad");
 
-// French
-assert_eq!(language_rules("fr").unwrap().singularize("journaux"), "journal");
+    // French
+    assert_eq!(language_rules("fr")?.singularize("journaux"), "journal");
 
-// Japanese
-assert_eq!(language_rules("ja").unwrap().singularize("user"), "user");
+    // Japanese
+    assert_eq!(language_rules("ja")?.singularize("user"), "user");
 
-// Unsupported locale returns an error
-assert!(language_rules("xx").is_err());
+    // Unsupported locale returns an error
+    assert!(language_rules("xx").is_err());
+    
+    Ok(())
+}
 ```
 
 ## Supported Languages

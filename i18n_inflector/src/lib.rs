@@ -63,16 +63,19 @@ use alloc::format;
 /// ```
 /// use i18n_inflector::{language_rules, LanguageRules};
 ///
-/// let rules = language_rules("en").unwrap();
+/// # fn main() -> i18n_inflector::Result<()> {
+/// let rules = language_rules("en")?;
 /// assert_eq!(rules.language(), "en");
 /// assert_eq!(rules.singularize("users"), "user");
 ///
 /// // Locale normalization
-/// let rules = language_rules("en-US").unwrap();
+/// let rules = language_rules("en-US")?;
 /// assert_eq!(rules.language(), "en");
 ///
 /// // Unsupported locale
 /// assert!(language_rules("xx").is_err());
+/// # Ok(())
+/// # }
 /// ```
 pub fn language_rules(locale: &str) -> Result<&'static LanguageRuleSet> {
     let normalized = normalize_locale(locale);
