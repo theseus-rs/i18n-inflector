@@ -20,9 +20,8 @@ impl NormalizedLocale {
     #[inline]
     #[must_use]
     pub(crate) fn as_str(&self) -> &str {
-        // SAFETY: The internal buffer is guaranteed to be valid UTF-8 by the constructors of
-        // NormalizedLocale.
-        unsafe { core::str::from_utf8_unchecked(&self.buffer[..self.len as usize]) }
+        let bytes = self.buffer.get(..usize::from(self.len)).unwrap_or_default();
+        core::str::from_utf8(bytes).unwrap_or_default()
     }
 }
 
@@ -33,12 +32,11 @@ pub(crate) fn normalize_locale(locale: &str) -> NormalizedLocale {
     let mut buffer = [0u8; MAX_LANGUAGE_CODE_LENGTH];
     let mut len: u8 = 0;
 
-    for i in 0..bytes.len().min(MAX_LANGUAGE_CODE_LENGTH) {
-        let b = bytes[i];
+    for (destination, b) in buffer.iter_mut().zip(bytes.iter().copied()) {
         if b == b'-' || b == b'_' {
             break;
         }
-        buffer[i] = b.to_ascii_lowercase();
+        *destination = b.to_ascii_lowercase();
         len += 1;
     }
 
