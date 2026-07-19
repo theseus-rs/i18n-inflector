@@ -15,7 +15,7 @@ keywords = ["inflector", "internationalization", "localization", "i18n", "l10n"]
 license = "Apache-2.0 OR MIT"
 repository = "https://github.com/theseus-rs/i18n-inflector"
 rust-version = "1.97.1"
-version = "0.2.1"
+version = "0.3.0"
 
 [workspace.lints.rust]
 dead_code = "allow"
@@ -31,6 +31,7 @@ expect_used = "deny"
 fallible_impl_from = "deny"
 indexing_slicing = "deny"
 large_stack_arrays = "allow"
+mod_module_files = "deny"
 panic = "deny"
 panic_in_result_fn = "deny"
 todo = "deny"
@@ -41,4 +42,5 @@ unwrap_used = "deny"
 
 [workspace.dependencies]
 criterion = "0.8.2"
-phf = { version = "0.14.0", default-features = false }
+icu_locale_core = { version = "2.2.0", default-features = false, features = ["alloc"] }
+icu_normalizer = { version = "2.2.0", default-features = false, features = ["compiled_data"] }

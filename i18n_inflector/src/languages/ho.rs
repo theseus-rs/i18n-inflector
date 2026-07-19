@@ -1,11 +1,18 @@
-//! Hiri Motu (ho) inflection rules.
+use crate::profile::{LanguageProfile, VerifiedLexeme};
 
-use crate::language_rules::LanguageRuleSet;
+const LEXEMES: &[VerifiedLexeme] = &[
+    VerifiedLexeme::new("tau", "tau"),
+    VerifiedLexeme::new("ruma", "ruma"),
+    VerifiedLexeme::new("sisia", "sisia"),
+];
 
-pub(crate) use super::ja::{pluralize, singularize};
+pub(crate) static PROFILE: LanguageProfile =
+    LanguageProfile::new("ho", "ho", true, None, &[], (false, false), LEXEMES);
 
-pub(crate) static RULES: LanguageRuleSet = LanguageRuleSet {
-    language: "ho",
-    singularize_fn: singularize,
-    pluralize_fn: pluralize,
-};
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn profile_data_is_valid() {
+        crate::languages::assert_language_profiles("ho", &[&super::PROFILE]);
+    }
+}

@@ -1,74 +1,24 @@
-//! French (fr) inflection rules.
-//!
-//! Also used for Interlingua (ia), Interlingue (ie), Occitan (oc), Romansh (rm), and
-//! Walloon (wa).
+use crate::profile::{LanguageProfile, LexicalClassSpec, Rule, VerifiedLexeme};
 
-use crate::language_rules::LanguageRuleSet;
-use alloc::borrow::Cow;
-use alloc::format;
-use alloc::vec;
-use alloc::vec::Vec;
+const CLASSES: &[LexicalClassSpec] = &[LexicalClassSpec::new(
+    "regular-s",
+    "regular nouns taking -s without a stem change",
+    Rule::Suffix("s"),
+)];
 
-pub(crate) static RULES: LanguageRuleSet = LanguageRuleSet {
-    language: "fr",
-    singularize_fn: singularize,
-    pluralize_fn: pluralize,
-};
+const LEXEMES: &[VerifiedLexeme] = &[
+    VerifiedLexeme::new("journal", "journaux"),
+    VerifiedLexeme::new("amour", "amours"),
+    VerifiedLexeme::new("matin", "matins"),
+];
 
-/// Converts a plural French noun to its singular form.
-///
-/// Handles `-aux` -> `-al` transformation and regular `-s` plurals.
-pub(crate) fn singularize(name: &str) -> Cow<'_, str> {
-    if let Some(stem) = name.strip_suffix("aux")
-        && !stem.is_empty()
-    {
-        return format!("{stem}al").into();
-    }
-    if let Some(stem) = name.strip_suffix('s')
-        && !stem.is_empty()
-    {
-        return Cow::Borrowed(stem);
-    }
-    Cow::Borrowed(name)
-}
-
-/// Returns a list of possible plural forms for a French noun.
-pub(crate) fn pluralize(name: &str) -> Vec<Cow<'_, str>> {
-    let mut candidates = vec![format!("{name}s").into()];
-    if let Some(stem) = name.strip_suffix("al") {
-        candidates.push(format!("{stem}aux").into());
-    }
-    candidates
-}
+pub(crate) static PROFILE: LanguageProfile =
+    LanguageProfile::new("fr", "fr", false, None, CLASSES, (true, false), LEXEMES);
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-
     #[test]
-    fn test_singularize() {
-        assert_eq!(singularize("utilisateurs"), "utilisateur");
-        assert_eq!(singularize("produits"), "produit");
-        assert_eq!(singularize("journaux"), "journal");
-        assert_eq!(singularize("animaux"), "animal");
-    }
-
-    #[test]
-    fn test_singularize_already_singular() {
-        assert_eq!(singularize("utilisateur"), "utilisateur");
-    }
-
-    #[test]
-    fn test_pluralize() {
-        let result = pluralize("utilisateur");
-        assert!(result.iter().any(|v| v == "utilisateurs"));
-
-        let result = pluralize("journal");
-        assert!(result.iter().any(|v| v == "journaux"));
-    }
-
-    #[test]
-    fn test_empty() {
-        assert_eq!(singularize(""), "");
+    fn profile_data_is_valid() {
+        crate::languages::assert_language_profiles("fr", &[&super::PROFILE]);
     }
 }

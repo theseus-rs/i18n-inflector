@@ -1,11 +1,14 @@
-//! Oriya (or) inflection rules.
+use crate::profile::{LanguageProfile, VerifiedLexeme};
 
-use crate::language_rules::LanguageRuleSet;
+const LEXEMES: &[VerifiedLexeme] = &[VerifiedLexeme::new("ପିଲା", "ପିଲାମାନେ")];
 
-pub(crate) use super::hi::{pluralize, singularize};
+pub(crate) static PROFILE: LanguageProfile =
+    LanguageProfile::new("or", "or", false, None, &[], (false, false), LEXEMES);
 
-pub(crate) static RULES: LanguageRuleSet = LanguageRuleSet {
-    language: "or",
-    singularize_fn: singularize,
-    pluralize_fn: pluralize,
-};
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn profile_data_is_valid() {
+        crate::languages::assert_language_profiles("or", &[&super::PROFILE]);
+    }
+}

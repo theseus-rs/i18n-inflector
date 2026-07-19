@@ -1,11 +1,18 @@
-//! Sango (sg) inflection rules.
+use crate::profile::{LanguageProfile, VerifiedLexeme};
 
-use crate::language_rules::LanguageRuleSet;
+const LEXEMES: &[VerifiedLexeme] = &[
+    VerifiedLexeme::new("zo", "zo"),
+    VerifiedLexeme::new("da", "da"),
+    VerifiedLexeme::new("mbëtï", "mbëtï"),
+];
 
-pub(crate) use super::ja::{pluralize, singularize};
+pub(crate) static PROFILE: LanguageProfile =
+    LanguageProfile::new("sg", "sg", true, None, &[], (false, false), LEXEMES);
 
-pub(crate) static RULES: LanguageRuleSet = LanguageRuleSet {
-    language: "sg",
-    singularize_fn: singularize,
-    pluralize_fn: pluralize,
-};
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn profile_data_is_valid() {
+        crate::languages::assert_language_profiles("sg", &[&super::PROFILE]);
+    }
+}

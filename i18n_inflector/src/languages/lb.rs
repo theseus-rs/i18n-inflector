@@ -1,11 +1,14 @@
-//! Luxembourgish (lb) inflection rules.
+use crate::profile::{LanguageProfile, VerifiedLexeme};
 
-use crate::language_rules::LanguageRuleSet;
+const LEXEMES: &[VerifiedLexeme] = &[VerifiedLexeme::new("Stad", "Stied")];
 
-pub(crate) use super::de::{pluralize, singularize};
+pub(crate) static PROFILE: LanguageProfile =
+    LanguageProfile::new("lb", "lb", false, None, &[], (false, false), LEXEMES);
 
-pub(crate) static RULES: LanguageRuleSet = LanguageRuleSet {
-    language: "lb",
-    singularize_fn: singularize,
-    pluralize_fn: pluralize,
-};
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn profile_data_is_valid() {
+        crate::languages::assert_language_profiles("lb", &[&super::PROFILE]);
+    }
+}

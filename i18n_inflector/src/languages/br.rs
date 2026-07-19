@@ -1,93 +1,14 @@
-//! Breton (br) inflection rules.
+use crate::profile::{LanguageProfile, VerifiedLexeme};
 
-use crate::language_rules::LanguageRuleSet;
-use alloc::borrow::Cow;
-use alloc::format;
-use alloc::vec;
-use alloc::vec::Vec;
+const LEXEMES: &[VerifiedLexeme] = &[VerifiedLexeme::new("ijinerezh", "ijinerezhioù")];
 
-pub(crate) static RULES: LanguageRuleSet = LanguageRuleSet {
-    language: "br",
-    singularize_fn: singularize,
-    pluralize_fn: pluralize,
-};
-
-/// Converts a plural Breton noun to its singular form.
-///
-/// Handles `-ioù`, `-où`, and `-ed` plural suffixes.
-pub(crate) fn singularize(name: &str) -> Cow<'_, str> {
-    if let Some(stem) = name.strip_suffix("iou")
-        && !stem.is_empty()
-    {
-        return Cow::Borrowed(stem);
-    }
-    if let Some(stem) = name.strip_suffix("ou")
-        && !stem.is_empty()
-    {
-        return Cow::Borrowed(stem);
-    }
-    if let Some(stem) = name.strip_suffix("ed")
-        && !stem.is_empty()
-    {
-        return Cow::Borrowed(stem);
-    }
-    Cow::Borrowed(name)
-}
-
-/// Returns a list of possible plural forms for a Breton noun.
-pub(crate) fn pluralize(name: &str) -> Vec<Cow<'_, str>> {
-    vec![
-        format!("{name}iou").into(),
-        format!("{name}ou").into(),
-        format!("{name}ed").into(),
-    ]
-}
+pub(crate) static PROFILE: LanguageProfile =
+    LanguageProfile::new("br", "br", false, None, &[], (false, false), LEXEMES);
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-
     #[test]
-    fn test_singularize_iou_suffix() {
-        assert_eq!(singularize("levriou"), "levr");
-    }
-
-    #[test]
-    fn test_singularize_ou_suffix() {
-        assert_eq!(singularize("bagou"), "bag");
-    }
-
-    #[test]
-    fn test_singularize_ed_suffix() {
-        assert_eq!(singularize("laboured"), "labour");
-    }
-
-    #[test]
-    fn test_singularize_already_singular() {
-        assert_eq!(singularize("bag"), "bag");
-    }
-
-    #[test]
-    fn test_singularize_suffix_only_inputs() {
-        // "iou" -> strip "iou" empty stem -> skip; strip "ou" -> "i" non-empty -> "i"
-        assert_eq!(singularize("iou"), "i");
-        assert_eq!(singularize("ou"), "ou");
-        assert_eq!(singularize("ed"), "ed");
-    }
-
-    #[test]
-    fn test_pluralize() {
-        let result = pluralize("bag");
-        assert_eq!(result.len(), 3);
-        assert!(result.iter().any(|v| v == "bagiou"));
-        assert!(result.iter().any(|v| v == "bagou"));
-        assert!(result.iter().any(|v| v == "baged"));
-    }
-
-    #[test]
-    fn test_empty() {
-        assert_eq!(singularize(""), "");
-        let result = pluralize("");
-        assert_eq!(result.len(), 3);
+    fn profile_data_is_valid() {
+        crate::languages::assert_language_profiles("br", &[&super::PROFILE]);
     }
 }

@@ -1,46 +1,33 @@
-//! Locale normalization utilities.
-//!
-//! Handles common locale variations like `en-US` -> `en`, `EN` -> `en`.
+use crate::registry::{base_profile, script_profile};
+use crate::{Error, LanguageProfile, Result};
+use alloc::format;
+use alloc::string::ToString;
+use icu_locale_core::LanguageIdentifier;
 
-/// Normalizes a locale string to a two-letter ISO 639-1 language code.
-///
-/// Strips region/country suffixes (e.g., `en-US` -> `en`, `pt-BR` -> `pt`), trims whitespace,
-/// and converts to lowercase. Returns a stack-allocated [`NormalizedLocale`] to avoid heap
-/// allocation.
-/// Maximum length of an ISO 639-1 language code.
-const MAX_LANGUAGE_CODE_LENGTH: usize = 2;
+pub(crate) fn resolve(locale: &str) -> Result<&'static LanguageProfile> {
+    let parsed = locale
+        .parse::<LanguageIdentifier>()
+        .map_err(|_| Error::InvalidLocale {
+            locale: locale.to_string(),
+        })?;
 
-/// A stack-allocated normalized locale string (avoids heap allocation).
-pub(crate) struct NormalizedLocale {
-    buffer: [u8; MAX_LANGUAGE_CODE_LENGTH],
-    len: u8,
-}
-
-impl NormalizedLocale {
-    #[inline]
-    #[must_use]
-    pub(crate) fn as_str(&self) -> &str {
-        let bytes = self.buffer.get(..usize::from(self.len)).unwrap_or_default();
-        core::str::from_utf8(bytes).unwrap_or_default()
-    }
-}
-
-#[inline]
-#[must_use]
-pub(crate) fn normalize_locale(locale: &str) -> NormalizedLocale {
-    let bytes = locale.as_bytes();
-    let mut buffer = [0u8; MAX_LANGUAGE_CODE_LENGTH];
-    let mut len: u8 = 0;
-
-    for (destination, b) in buffer.iter_mut().zip(bytes.iter().copied()) {
-        if b == b'-' || b == b'_' {
-            break;
-        }
-        *destination = b.to_ascii_lowercase();
-        len += 1;
+    if !parsed.variants.is_empty() {
+        return Err(Error::UnsupportedLocale {
+            locale: locale.to_string(),
+        });
     }
 
-    NormalizedLocale { buffer, len }
+    let language = parsed.language.as_str();
+    if let Some(script) = parsed.script {
+        let profile = format!("{language}-{}", script.as_str());
+        return script_profile(profile.as_str()).ok_or_else(|| Error::UnsupportedLocale {
+            locale: locale.to_string(),
+        });
+    }
+
+    base_profile(language).ok_or_else(|| Error::UnsupportedLocale {
+        locale: locale.to_string(),
+    })
 }
 
 #[cfg(test)]
@@ -48,41 +35,28 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_normalize_simple() {
-        assert_eq!(normalize_locale("en").as_str(), "en");
-        assert_eq!(normalize_locale("fr").as_str(), "fr");
+    fn resolves_base_region_and_scripts() {
+        assert_eq!(resolve("en").unwrap().locale(), "en");
+        assert_eq!(resolve("EN-us").unwrap().locale(), "en");
+        assert_eq!(resolve("sr-Latn-RS").unwrap().locale(), "sr-Latn");
+        assert_eq!(resolve("zh-hant-TW").unwrap().locale(), "zh-Hant");
     }
 
     #[test]
-    fn test_normalize_with_region() {
-        assert_eq!(normalize_locale("a_b").as_str(), "a");
-        assert_eq!(normalize_locale("a-b").as_str(), "a");
-        assert_eq!(normalize_locale("en_US").as_str(), "en");
-        assert_eq!(normalize_locale("en-US").as_str(), "en");
-        assert_eq!(normalize_locale("pt-BR").as_str(), "pt");
-        assert_eq!(normalize_locale("zh-TW").as_str(), "zh");
-    }
-
-    #[test]
-    fn test_normalize_with_underscore() {
-        assert_eq!(normalize_locale("en_US").as_str(), "en");
-        assert_eq!(normalize_locale("pt_BR").as_str(), "pt");
-    }
-
-    #[test]
-    fn test_normalize_uppercase() {
-        assert_eq!(normalize_locale("EN").as_str(), "en");
-        assert_eq!(normalize_locale("EN-US").as_str(), "en");
-    }
-
-    #[test]
-    fn test_normalize_unicode() {
-        assert_eq!(normalize_locale("ük").as_str(), "ü");
-        assert_eq!(normalize_locale("EN-ÜS").as_str(), "en");
-    }
-
-    #[test]
-    fn test_normalize_empty() {
-        assert_eq!(normalize_locale("").as_str(), "");
+    fn rejects_invalid_or_unsupported_locales() {
+        assert_eq!(
+            resolve("en_US").map(LanguageProfile::locale),
+            Err(Error::InvalidLocale {
+                locale: "en_US".into(),
+            })
+        );
+        for locale in ["xx", "en-Cyrl", "en-fonipa"] {
+            assert_eq!(
+                resolve(locale).map(LanguageProfile::locale),
+                Err(Error::UnsupportedLocale {
+                    locale: locale.into(),
+                })
+            );
+        }
     }
 }

@@ -1,11 +1,14 @@
-//! Tajik (tg) inflection rules.
+use crate::profile::{LanguageProfile, VerifiedLexeme};
 
-use crate::language_rules::LanguageRuleSet;
+const LEXEMES: &[VerifiedLexeme] = &[VerifiedLexeme::new("рафиқ", "рафиқон")];
 
-pub(crate) use super::fa::{pluralize, singularize};
+pub(crate) static PROFILE: LanguageProfile =
+    LanguageProfile::new("tg", "tg", false, None, &[], (false, false), LEXEMES);
 
-pub(crate) static RULES: LanguageRuleSet = LanguageRuleSet {
-    language: "tg",
-    singularize_fn: singularize,
-    pluralize_fn: pluralize,
-};
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn profile_data_is_valid() {
+        crate::languages::assert_language_profiles("tg", &[&super::PROFILE]);
+    }
+}
