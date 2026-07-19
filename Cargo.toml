@@ -14,22 +14,31 @@ edition = "2024"
 keywords = ["inflector", "internationalization", "localization", "i18n", "l10n"]
 license = "Apache-2.0 OR MIT"
 repository = "https://github.com/theseus-rs/i18n-inflector"
-rust-version = "1.92.0"
+rust-version = "1.97.1"
 version = "0.2.1"
 
 [workspace.lints.rust]
 dead_code = "allow"
 missing_debug_implementations = "deny"
+unsafe_code = "deny"
+unused_qualifications = "deny"
 warnings = "deny"
 
 [workspace.lints.clippy]
 pedantic = { level = "deny", priority = -1 }
 allow_attributes = "deny"
+expect_used = "deny"
 fallible_impl_from = "deny"
-unwrap_used = "deny"
+indexing_slicing = "deny"
 large_stack_arrays = "allow"
-result_large_err = "allow"
+panic = "deny"
+panic_in_result_fn = "deny"
+todo = "deny"
+unreachable = "deny"
+unimplemented = "deny"
+unwrap_in_result = "deny"
+unwrap_used = "deny"
 
 [workspace.dependencies]
 criterion = "0.8.2"
-phf = { version = "0.13.1", default-features = false }
+phf = { version = "0.14.0", default-features = false }
