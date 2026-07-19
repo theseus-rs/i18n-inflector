@@ -204,20 +204,28 @@ fn rule_example(rule: crate::profile::Rule) -> (alloc::string::String, alloc::st
 }
 
 #[cfg(test)]
+fn request_with_class<'a>(
+    lemma: &'a str,
+    class: Option<&'static str>,
+) -> crate::InflectionRequest<'a> {
+    use crate::{InflectionRequest, LexicalClassId};
+
+    class.map_or(InflectionRequest::plural(lemma), |class| {
+        InflectionRequest::plural(lemma).lexical_class(LexicalClassId::new(class))
+    })
+}
+
+#[cfg(test)]
 fn assert_rule(
     profile: &crate::profile::LanguageProfile,
     class: Option<&'static str>,
     rule: crate::profile::Rule,
 ) {
     use crate::profile::Rule;
-    use crate::{InflectionRequest, LexicalClassId};
     use alloc::string::ToString;
 
     let (lemma, expected) = rule_example(rule);
-    let mut request = InflectionRequest::plural(&lemma);
-    if let Some(class) = class {
-        request = request.lexical_class(LexicalClassId::new(class));
-    }
+    let request = request_with_class(&lemma, class);
     assert_eq!(
         profile
             .inflect(request)
@@ -225,9 +233,10 @@ fn assert_rule(
         Ok(expected)
     );
     if rule == Rule::Turkish {
+        let request = request_with_class("şehir-test", class);
         assert_eq!(
             profile
-                .inflect(InflectionRequest::plural("şehir-test"))
+                .inflect(request)
                 .map(|forms| forms.primary().to_string()),
             Ok("şehir-testler".to_string())
         );

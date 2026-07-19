@@ -1,7 +1,8 @@
 //! Correctness-first dictionary-form noun inflection for every ISO Set 1 language code.
 //!
 //! The input is a dictionary lemma, not an arbitrary already-inflected word. Successful results
-//! contain only attested entries or forms produced by an explicitly selected productive class.
+//! contain only curated embedded entries or forms produced by an explicitly selected productive
+//! class.
 //!
 //! ```
 //! use i18n_inflector::{InflectionRequest, LexicalClassId, language_profile};

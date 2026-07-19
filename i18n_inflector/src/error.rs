@@ -27,6 +27,11 @@ pub enum Error {
         locale: &'static str,
         class: String,
     },
+    IncompatibleLexicalClass {
+        locale: &'static str,
+        lemma: String,
+        class: String,
+    },
     UnknownLemma {
         locale: &'static str,
         lemma: String,
@@ -53,6 +58,14 @@ impl fmt::Display for Error {
             Self::UnknownLexicalClass { locale, class } => {
                 write!(f, "unknown lexical class for {locale}: {class}")
             }
+            Self::IncompatibleLexicalClass {
+                locale,
+                lemma,
+                class,
+            } => write!(
+                f,
+                "lexical class {class} is incompatible with {locale} lemma: {lemma}"
+            ),
             Self::UnknownLemma { locale, lemma } => {
                 write!(f, "no verified inflection for {locale} lemma: {lemma}")
             }
@@ -107,6 +120,14 @@ mod tests {
                     class: "bad".into(),
                 },
                 "unknown lexical class for en: bad",
+            ),
+            (
+                Error::IncompatibleLexicalClass {
+                    locale: "en",
+                    lemma: "child".into(),
+                    class: "regular-s".into(),
+                },
+                "lexical class regular-s is incompatible with en lemma: child",
             ),
             (
                 Error::UnknownLemma {

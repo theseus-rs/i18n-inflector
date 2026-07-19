@@ -270,7 +270,7 @@ impl LanguageProfile {
     /// # Errors
     ///
     /// Returns a typed [`Error`] when the request is invalid, under-specified, or not covered by
-    /// an attested entry or documented productive class.
+    /// a curated embedded entry or documented productive class.
     pub fn inflect<'a>(&self, request: InflectionRequest<'a>) -> Result<InflectedForms<'a>> {
         if request.lemma.is_empty() {
             return Err(Error::EmptyLemma);
@@ -289,11 +289,45 @@ impl LanguageProfile {
             });
         }
 
-        if let Some(entry) = self
+        let entry = self
             .lexemes
             .iter()
-            .find(|entry| entry.lemma == lemma.as_ref())
+            .find(|entry| entry.lemma == lemma.as_ref());
+
+        if let Some(class) = request.lexical_class
+            && let Some(rule) = self
+                .capabilities
+                .classes
+                .iter()
+                .find(|spec| spec.id == class.as_str())
+                .map(|spec| spec.rule)
         {
+            let Some(form) = rule.apply(lemma.as_ref()) else {
+                return Err(Error::UnknownLemma {
+                    locale: self.locale,
+                    lemma: lemma.into_owned(),
+                });
+            };
+            if let Some(entry) = entry {
+                let Some(primary) = entry.plural() else {
+                    return Err(Error::NoForm {
+                        locale: self.locale,
+                        lemma: lemma.into_owned(),
+                        number: request.number,
+                    });
+                };
+                if form != primary && !entry.alternatives().contains(&form.as_str()) {
+                    return Err(Error::IncompatibleLexicalClass {
+                        locale: self.locale,
+                        lemma: lemma.into_owned(),
+                        class: class.as_str().to_string(),
+                    });
+                }
+            }
+            return Ok(InflectedForms::single(Cow::Owned(form)));
+        }
+
+        if let Some(entry) = entry {
             return entry.forms().ok_or_else(|| Error::NoForm {
                 locale: self.locale,
                 lemma: lemma.into_owned(),
@@ -301,16 +335,7 @@ impl LanguageProfile {
             });
         }
 
-        let rule = match request.lexical_class {
-            Some(class) => self
-                .capabilities
-                .classes
-                .iter()
-                .find(|spec| spec.id == class.as_str())
-                .map(|spec| spec.rule),
-            None => self.default_rule,
-        };
-        if let Some(rule) = rule {
+        if let Some(rule) = self.default_rule {
             return rule
                 .apply(lemma.as_ref())
                 .map(|form| InflectedForms::single(Cow::Owned(form)))
@@ -513,6 +538,9 @@ mod tests {
         let reduplicated = InflectionRequest::plural("buku")
             .lexical_class(LexicalClassId::new("explicit-reduplication"));
         assert_eq!(primary(indonesian, reduplicated), "buku-buku");
+        let verified_reduplicated = InflectionRequest::plural("tikus")
+            .lexical_class(LexicalClassId::new("explicit-reduplication"));
+        assert_eq!(primary(indonesian, verified_reduplicated), "tikus-tikus");
 
         assert_eq!(
             primary(
@@ -584,6 +612,32 @@ mod tests {
                 class: "not-a-class".into(),
             })
         );
+    }
+
+    #[test]
+    fn rejects_incompatible_or_unsupported_selectors() {
+        let english = language_profile("en").unwrap();
+        assert_eq!(
+            english.inflect(
+                InflectionRequest::plural("child").lexical_class(LexicalClassId::new("regular-s"))
+            ),
+            Err(Error::IncompatibleLexicalClass {
+                locale: "en",
+                lemma: "child".into(),
+                class: "regular-s".into(),
+            })
+        );
+        assert_eq!(
+            english.inflect(
+                InflectionRequest::plural("furniture")
+                    .lexical_class(LexicalClassId::new("regular-s"))
+            ),
+            Err(Error::NoForm {
+                locale: "en",
+                lemma: "furniture".into(),
+                number: Number::Plural,
+            })
+        );
         assert_eq!(
             english.inflect(InflectionRequest::plural("dog").gender(Gender::Common)),
             Err(Error::UnsupportedSelector {
@@ -607,26 +661,53 @@ mod tests {
                 lemma: "dog".into(),
             })
         );
-        assert!(
+        assert_eq!(
             language_profile("ar")
                 .unwrap()
-                .inflect(InflectionRequest::plural("unknown").gender(Gender::Masculine))
-                .is_err()
-        );
-        assert!(
-            language_profile("sw")
-                .unwrap()
-                .inflect(InflectionRequest::plural("unknown").animacy(Animacy::Human))
-                .is_err()
+                .inflect(InflectionRequest::plural("رِسَالَة").gender(Gender::Masculine)),
+            Err(Error::UnsupportedSelector {
+                locale: "ar",
+                selector: SelectorKind::Gender,
+            })
         );
         assert_eq!(
-            language_profile("tr")
+            language_profile("sw")
                 .unwrap()
-                .inflect(InflectionRequest::plural("123")),
+                .inflect(InflectionRequest::plural("mtu").animacy(Animacy::Human)),
+            Err(Error::UnsupportedSelector {
+                locale: "sw",
+                selector: SelectorKind::Animacy,
+            })
+        );
+    }
+
+    #[test]
+    fn requires_an_explicit_class_for_unknown_turkish_lemmas() {
+        assert_eq!(
+            language_profile("tr").unwrap().inflect(
+                InflectionRequest::plural("123")
+                    .lexical_class(LexicalClassId::new("vowel-harmony"))
+            ),
             Err(Error::UnknownLemma {
                 locale: "tr",
                 lemma: "123".into(),
             })
+        );
+        assert_eq!(
+            language_profile("tr")
+                .unwrap()
+                .inflect(InflectionRequest::plural("unknown")),
+            Err(Error::MissingSelector {
+                locale: "tr",
+                selector: SelectorKind::LexicalClass,
+            })
+        );
+        assert_eq!(
+            primary(
+                language_profile("tr").unwrap(),
+                InflectionRequest::plural("saat")
+            ),
+            "saatler"
         );
     }
 
@@ -639,7 +720,7 @@ mod tests {
         );
         assert_eq!(french.language(), "fr");
         assert_eq!(french.locale(), "fr");
-        assert!(french.capabilities().supports_gender());
+        assert!(!french.capabilities().supports_gender());
         assert!(!french.capabilities().supports_animacy());
         assert!(french.capabilities().supports_countability());
         let classes = french.capabilities().lexical_classes();

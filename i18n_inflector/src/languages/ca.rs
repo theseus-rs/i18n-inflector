@@ -13,7 +13,7 @@ const LEXEMES: &[VerifiedLexeme] = &[
 ];
 
 pub(crate) static PROFILE: LanguageProfile =
-    LanguageProfile::new("ca", "ca", false, None, CLASSES, (true, false), LEXEMES);
+    LanguageProfile::new("ca", "ca", false, None, CLASSES, (false, false), LEXEMES);
 
 #[cfg(test)]
 mod tests {

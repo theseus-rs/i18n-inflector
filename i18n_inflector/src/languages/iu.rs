@@ -3,7 +3,7 @@ use crate::profile::{LanguageProfile, VerifiedLexeme};
 const LEXEMES: &[VerifiedLexeme] = &[VerifiedLexeme::new("ᐃᓄᒃ", "ᐃᓄᐃᑦ")];
 
 pub(crate) static PROFILE: LanguageProfile =
-    LanguageProfile::new("iu", "iu-Cans", false, None, &[], (false, true), LEXEMES);
+    LanguageProfile::new("iu", "iu-Cans", false, None, &[], (false, false), LEXEMES);
 
 const LATN_LEXEMES: &[VerifiedLexeme] = &[VerifiedLexeme::new("inuk", "inuit")];
 
@@ -13,7 +13,7 @@ pub(crate) static LATN: LanguageProfile = LanguageProfile::new(
     false,
     None,
     &[],
-    (false, true),
+    (false, false),
     LATN_LEXEMES,
 );
 
