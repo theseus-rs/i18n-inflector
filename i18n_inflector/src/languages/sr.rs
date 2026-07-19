@@ -1,11 +1,26 @@
-//! Serbian (sr) inflection rules.
+use crate::profile::{LanguageProfile, VerifiedLexeme};
 
-use crate::language_rules::LanguageRuleSet;
+const LEXEMES: &[VerifiedLexeme] = &[VerifiedLexeme::new("изузетак", "изузеци")];
 
-pub(crate) use super::hr::{pluralize, singularize};
+pub(crate) static PROFILE: LanguageProfile =
+    LanguageProfile::new("sr", "sr-Cyrl", false, None, &[], (false, false), LEXEMES);
 
-pub(crate) static RULES: LanguageRuleSet = LanguageRuleSet {
-    language: "sr",
-    singularize_fn: singularize,
-    pluralize_fn: pluralize,
-};
+const LATN_LEXEMES: &[VerifiedLexeme] = &[VerifiedLexeme::new("izuzetak", "izuzeci")];
+
+pub(crate) static LATN: LanguageProfile = LanguageProfile::new(
+    "sr",
+    "sr-Latn",
+    false,
+    None,
+    &[],
+    (false, false),
+    LATN_LEXEMES,
+);
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn profile_data_is_valid() {
+        crate::languages::assert_language_profiles("sr", &[&super::PROFILE, &super::LATN]);
+    }
+}

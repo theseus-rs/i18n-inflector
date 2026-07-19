@@ -1,11 +1,26 @@
-//! Panjabi (pa) inflection rules.
+use crate::profile::{LanguageProfile, VerifiedLexeme};
 
-use crate::language_rules::LanguageRuleSet;
+const LEXEMES: &[VerifiedLexeme] = &[VerifiedLexeme::new("ਘੋੜਾ", "ਘੋੜੇ")];
 
-pub(crate) use super::hi::{pluralize, singularize};
+pub(crate) static PROFILE: LanguageProfile =
+    LanguageProfile::new("pa", "pa-Guru", false, None, &[], (false, false), LEXEMES);
 
-pub(crate) static RULES: LanguageRuleSet = LanguageRuleSet {
-    language: "pa",
-    singularize_fn: singularize,
-    pluralize_fn: pluralize,
-};
+const ARAB_LEXEMES: &[VerifiedLexeme] = &[VerifiedLexeme::new("گھوڑا", "گھوڑے")];
+
+pub(crate) static ARAB: LanguageProfile = LanguageProfile::new(
+    "pa",
+    "pa-Arab",
+    false,
+    None,
+    &[],
+    (false, false),
+    ARAB_LEXEMES,
+);
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn profile_data_is_valid() {
+        crate::languages::assert_language_profiles("pa", &[&super::PROFILE, &super::ARAB]);
+    }
+}

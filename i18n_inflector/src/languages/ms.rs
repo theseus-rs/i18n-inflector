@@ -1,11 +1,24 @@
-//! Malay (ms) inflection rules.
+use crate::profile::{LanguageProfile, LexicalClassSpec, Rule, VerifiedLexeme};
 
-use crate::language_rules::LanguageRuleSet;
+const CLASSES: &[LexicalClassSpec] = &[LexicalClassSpec::new(
+    "explicit-reduplication",
+    "explicit plural by full reduplication",
+    Rule::Reduplicate("-"),
+)];
 
-pub(crate) use super::ja::{pluralize, singularize};
+const LEXEMES: &[VerifiedLexeme] = &[VerifiedLexeme::with_alternatives(
+    "pustaka",
+    "pustaka",
+    &["pustaka-pustaka"],
+)];
 
-pub(crate) static RULES: LanguageRuleSet = LanguageRuleSet {
-    language: "ms",
-    singularize_fn: singularize,
-    pluralize_fn: pluralize,
-};
+pub(crate) static PROFILE: LanguageProfile =
+    LanguageProfile::new("ms", "ms", true, None, CLASSES, (false, false), LEXEMES);
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn profile_data_is_valid() {
+        crate::languages::assert_language_profiles("ms", &[&super::PROFILE]);
+    }
+}

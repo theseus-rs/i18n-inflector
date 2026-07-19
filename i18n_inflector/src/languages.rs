@@ -1,8 +1,4 @@
-//! Language-specific inflection modules.
-//!
-//! Each module provides `singularize` and `pluralize` functions for a specific
-//! language. Modules that share an implementation re-export from a primary
-//! module.
+//! Language-specific profiles and conformance lexemes.
 
 pub(crate) mod aa;
 pub(crate) mod ab;
@@ -29,6 +25,7 @@ pub(crate) mod ca;
 pub(crate) mod ce;
 pub(crate) mod ch;
 pub(crate) mod co;
+pub(crate) mod cr;
 pub(crate) mod cs;
 pub(crate) mod cu;
 pub(crate) mod cv;
@@ -65,12 +62,14 @@ pub(crate) mod hr;
 pub(crate) mod ht;
 pub(crate) mod hu;
 pub(crate) mod hy;
+pub(crate) mod hz;
 pub(crate) mod ia;
 pub(crate) mod id;
 pub(crate) mod ie;
 pub(crate) mod ig;
 pub(crate) mod ii;
 pub(crate) mod ik;
+pub(crate) mod io;
 pub(crate) mod is;
 pub(crate) mod it;
 pub(crate) mod iu;
@@ -81,9 +80,12 @@ pub(crate) mod kg;
 pub(crate) mod ki;
 pub(crate) mod kj;
 pub(crate) mod kk;
+pub(crate) mod kl;
 pub(crate) mod km;
 pub(crate) mod kn;
 pub(crate) mod ko;
+pub(crate) mod kr;
+pub(crate) mod ks;
 pub(crate) mod ku;
 pub(crate) mod kv;
 pub(crate) mod kw;
@@ -92,11 +94,13 @@ pub(crate) mod la;
 pub(crate) mod lb;
 pub(crate) mod lg;
 pub(crate) mod li;
+pub(crate) mod ln;
 pub(crate) mod lo;
 pub(crate) mod lt;
 pub(crate) mod lu;
 pub(crate) mod lv;
 pub(crate) mod mg;
+pub(crate) mod mh;
 pub(crate) mod mi;
 pub(crate) mod mk;
 pub(crate) mod ml;
@@ -105,9 +109,11 @@ pub(crate) mod mr;
 pub(crate) mod ms;
 pub(crate) mod mt;
 pub(crate) mod my;
+pub(crate) mod na;
 pub(crate) mod nb;
 pub(crate) mod nd;
 pub(crate) mod ne;
+pub(crate) mod ng;
 pub(crate) mod nl;
 pub(crate) mod nn;
 pub(crate) mod no;
@@ -126,6 +132,7 @@ pub(crate) mod ps;
 pub(crate) mod pt;
 pub(crate) mod qu;
 pub(crate) mod rm;
+pub(crate) mod rn;
 pub(crate) mod ro;
 pub(crate) mod ru;
 pub(crate) mod rw;
@@ -155,19 +162,145 @@ pub(crate) mod ti;
 pub(crate) mod tk;
 pub(crate) mod tl;
 pub(crate) mod tn;
+pub(crate) mod to;
 pub(crate) mod tr;
 pub(crate) mod ts;
 pub(crate) mod tt;
+pub(crate) mod tw;
+pub(crate) mod ty;
 pub(crate) mod ug;
 pub(crate) mod uk;
 pub(crate) mod ur;
 pub(crate) mod uz;
 pub(crate) mod ve;
 pub(crate) mod vi;
+pub(crate) mod vo;
 pub(crate) mod wa;
 pub(crate) mod wo;
 pub(crate) mod xh;
 pub(crate) mod yi;
 pub(crate) mod yo;
+pub(crate) mod za;
 pub(crate) mod zh;
 pub(crate) mod zu;
+
+#[cfg(test)]
+fn rule_example(rule: crate::profile::Rule) -> (alloc::string::String, alloc::string::String) {
+    use crate::profile::Rule;
+    use alloc::format;
+    use alloc::string::ToString;
+
+    match rule {
+        Rule::Suffix(suffix) => ("unit".to_string(), format!("unit{suffix}")),
+        Rule::ReplaceSuffix { singular, plural } => {
+            (format!("unit{singular}"), format!("unit{plural}"))
+        }
+        Rule::ReplacePrefix { singular, plural } => {
+            (format!("{singular}unit"), format!("{plural}unit"))
+        }
+        Rule::Reduplicate(separator) => ("unit".to_string(), format!("unit{separator}unit")),
+        Rule::Turkish => ("kitap".to_string(), "kitaplar".to_string()),
+    }
+}
+
+#[cfg(test)]
+fn assert_rule(
+    profile: &crate::profile::LanguageProfile,
+    class: Option<&'static str>,
+    rule: crate::profile::Rule,
+) {
+    use crate::profile::Rule;
+    use crate::{InflectionRequest, LexicalClassId};
+    use alloc::string::ToString;
+
+    let (lemma, expected) = rule_example(rule);
+    let mut request = InflectionRequest::plural(&lemma);
+    if let Some(class) = class {
+        request = request.lexical_class(LexicalClassId::new(class));
+    }
+    assert_eq!(
+        profile
+            .inflect(request)
+            .map(|forms| forms.primary().to_string()),
+        Ok(expected)
+    );
+    if rule == Rule::Turkish {
+        assert_eq!(
+            profile
+                .inflect(InflectionRequest::plural("şehir-test"))
+                .map(|forms| forms.primary().to_string()),
+            Ok("şehir-testler".to_string())
+        );
+    }
+}
+
+#[cfg(test)]
+fn assert_language_profiles(
+    expected_language: &str,
+    profiles: &[&crate::profile::LanguageProfile],
+) {
+    use crate::{Error, InflectionRequest, Number};
+    use alloc::string::ToString;
+
+    assert!(!profiles.is_empty());
+    for profile in profiles {
+        assert_eq!(profile.language(), expected_language);
+        assert!(
+            profile.locale() == expected_language
+                || profile
+                    .locale()
+                    .strip_prefix(expected_language)
+                    .is_some_and(|suffix| suffix.starts_with('-'))
+        );
+        assert_eq!(
+            profile
+                .inflect(InflectionRequest::singular("module-unit"))
+                .map(|forms| forms.primary().to_string()),
+            Ok("module-unit".to_string())
+        );
+
+        assert!(!profile.lexemes().is_empty());
+        for lexeme in profile.lexemes() {
+            let result = profile.inflect(InflectionRequest::plural(lexeme.lemma()));
+            if let Some(plural) = lexeme.plural() {
+                assert_eq!(
+                    result.as_ref().map(crate::InflectedForms::primary),
+                    Ok(plural)
+                );
+                assert!(result.as_ref().is_ok_and(|forms| {
+                    forms
+                        .alternatives()
+                        .iter()
+                        .map(AsRef::as_ref)
+                        .eq(lexeme.alternatives().iter().copied())
+                }));
+            } else {
+                assert_eq!(
+                    result,
+                    Err(Error::NoForm {
+                        locale: profile.locale(),
+                        lemma: lexeme.lemma().to_string(),
+                        number: Number::Plural,
+                    })
+                );
+            }
+        }
+
+        if profile.invariant {
+            assert_eq!(
+                profile
+                    .inflect(InflectionRequest::plural("module-unit"))
+                    .map(|forms| forms.primary().to_string()),
+                Ok("module-unit".to_string())
+            );
+        }
+        if let Some(rule) = profile.default_rule {
+            assert_rule(profile, None, rule);
+        }
+        for class in profile.capabilities().lexical_classes() {
+            assert!(!class.id().is_empty());
+            assert!(!class.description().is_empty());
+            assert_rule(profile, Some(class.id()), class.rule);
+        }
+    }
+}

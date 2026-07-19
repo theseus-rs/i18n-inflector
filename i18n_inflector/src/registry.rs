@@ -1,231 +1,336 @@
-//! Registry of all language rules, keyed by ISO 639-1 language code.
-
-use phf::phf_map;
-
-use crate::language_rules::LanguageRuleSet;
+use crate::LanguageProfile;
 use crate::languages;
 
-/// A compile-time map of ISO 639-1 language codes to their [`LanguageRuleSet`].
-pub(crate) static LANGUAGE_RULES_MAP: phf::Map<&'static str, &'static LanguageRuleSet> = phf_map! {
-    "aa" => &languages::aa::RULES,
-    "ab" => &languages::ab::RULES,
-    "ae" => &languages::ae::RULES,
-    "af" => &languages::af::RULES,
-    "ak" => &languages::ak::RULES,
-    "am" => &languages::am::RULES,
-    "an" => &languages::an::RULES,
-    "ar" => &languages::ar::RULES,
-    "as" => &languages::r#as::RULES,
-    "av" => &languages::av::RULES,
-    "ay" => &languages::ay::RULES,
-    "az" => &languages::az::RULES,
-    "ba" => &languages::ba::RULES,
-    "be" => &languages::be::RULES,
-    "bg" => &languages::bg::RULES,
-    "bi" => &languages::bi::RULES,
-    "bm" => &languages::bm::RULES,
-    "bn" => &languages::bn::RULES,
-    "bo" => &languages::bo::RULES,
-    "br" => &languages::br::RULES,
-    "bs" => &languages::bs::RULES,
-    "ca" => &languages::ca::RULES,
-    "ce" => &languages::ce::RULES,
-    "ch" => &languages::ch::RULES,
-    "co" => &languages::co::RULES,
-    "cs" => &languages::cs::RULES,
-    "cu" => &languages::cu::RULES,
-    "cv" => &languages::cv::RULES,
-    "cy" => &languages::cy::RULES,
-    "da" => &languages::da::RULES,
-    "de" => &languages::de::RULES,
-    "dv" => &languages::dv::RULES,
-    "dz" => &languages::dz::RULES,
-    "ee" => &languages::ee::RULES,
-    "el" => &languages::el::RULES,
-    "en" => &languages::en::RULES,
-    "eo" => &languages::eo::RULES,
-    "es" => &languages::es::RULES,
-    "et" => &languages::et::RULES,
-    "eu" => &languages::eu::RULES,
-    "fa" => &languages::fa::RULES,
-    "ff" => &languages::ff::RULES,
-    "fi" => &languages::fi::RULES,
-    "fj" => &languages::fj::RULES,
-    "fo" => &languages::fo::RULES,
-    "fr" => &languages::fr::RULES,
-    "fy" => &languages::fy::RULES,
-    "ga" => &languages::ga::RULES,
-    "gd" => &languages::gd::RULES,
-    "gl" => &languages::gl::RULES,
-    "gn" => &languages::gn::RULES,
-    "gu" => &languages::gu::RULES,
-    "gv" => &languages::gv::RULES,
-    "ha" => &languages::ha::RULES,
-    "he" => &languages::he::RULES,
-    "hi" => &languages::hi::RULES,
-    "ho" => &languages::ho::RULES,
-    "hr" => &languages::hr::RULES,
-    "ht" => &languages::ht::RULES,
-    "hu" => &languages::hu::RULES,
-    "hy" => &languages::hy::RULES,
-    "ia" => &languages::ia::RULES,
-    "id" => &languages::id::RULES,
-    "ie" => &languages::ie::RULES,
-    "ig" => &languages::ig::RULES,
-    "ii" => &languages::ii::RULES,
-    "ik" => &languages::ik::RULES,
-    "is" => &languages::is::RULES,
-    "it" => &languages::it::RULES,
-    "iu" => &languages::iu::RULES,
-    "ja" => &languages::ja::RULES,
-    "jv" => &languages::jv::RULES,
-    "ka" => &languages::ka::RULES,
-    "kg" => &languages::kg::RULES,
-    "ki" => &languages::ki::RULES,
-    "kj" => &languages::kj::RULES,
-    "kk" => &languages::kk::RULES,
-    "km" => &languages::km::RULES,
-    "kn" => &languages::kn::RULES,
-    "ko" => &languages::ko::RULES,
-    "ku" => &languages::ku::RULES,
-    "kv" => &languages::kv::RULES,
-    "kw" => &languages::kw::RULES,
-    "ky" => &languages::ky::RULES,
-    "la" => &languages::la::RULES,
-    "lb" => &languages::lb::RULES,
-    "lg" => &languages::lg::RULES,
-    "li" => &languages::li::RULES,
-    "lo" => &languages::lo::RULES,
-    "lt" => &languages::lt::RULES,
-    "lu" => &languages::lu::RULES,
-    "lv" => &languages::lv::RULES,
-    "mg" => &languages::mg::RULES,
-    "mi" => &languages::mi::RULES,
-    "mk" => &languages::mk::RULES,
-    "ml" => &languages::ml::RULES,
-    "mn" => &languages::mn::RULES,
-    "mr" => &languages::mr::RULES,
-    "ms" => &languages::ms::RULES,
-    "mt" => &languages::mt::RULES,
-    "my" => &languages::my::RULES,
-    "nb" => &languages::nb::RULES,
-    "nd" => &languages::nd::RULES,
-    "ne" => &languages::ne::RULES,
-    "nl" => &languages::nl::RULES,
-    "nn" => &languages::nn::RULES,
-    "no" => &languages::no::RULES,
-    "nr" => &languages::nr::RULES,
-    "nv" => &languages::nv::RULES,
-    "ny" => &languages::ny::RULES,
-    "oc" => &languages::oc::RULES,
-    "oj" => &languages::oj::RULES,
-    "om" => &languages::om::RULES,
-    "or" => &languages::or::RULES,
-    "os" => &languages::os::RULES,
-    "pa" => &languages::pa::RULES,
-    "pi" => &languages::pi::RULES,
-    "pl" => &languages::pl::RULES,
-    "ps" => &languages::ps::RULES,
-    "pt" => &languages::pt::RULES,
-    "qu" => &languages::qu::RULES,
-    "rm" => &languages::rm::RULES,
-    "ro" => &languages::ro::RULES,
-    "ru" => &languages::ru::RULES,
-    "rw" => &languages::rw::RULES,
-    "sa" => &languages::sa::RULES,
-    "sc" => &languages::sc::RULES,
-    "sd" => &languages::sd::RULES,
-    "se" => &languages::se::RULES,
-    "sg" => &languages::sg::RULES,
-    "si" => &languages::si::RULES,
-    "sk" => &languages::sk::RULES,
-    "sl" => &languages::sl::RULES,
-    "sm" => &languages::sm::RULES,
-    "sn" => &languages::sn::RULES,
-    "so" => &languages::so::RULES,
-    "sq" => &languages::sq::RULES,
-    "sr" => &languages::sr::RULES,
-    "ss" => &languages::ss::RULES,
-    "st" => &languages::st::RULES,
-    "su" => &languages::su::RULES,
-    "sv" => &languages::sv::RULES,
-    "sw" => &languages::sw::RULES,
-    "ta" => &languages::ta::RULES,
-    "te" => &languages::te::RULES,
-    "tg" => &languages::tg::RULES,
-    "th" => &languages::th::RULES,
-    "ti" => &languages::ti::RULES,
-    "tk" => &languages::tk::RULES,
-    "tl" => &languages::tl::RULES,
-    "tn" => &languages::tn::RULES,
-    "tr" => &languages::tr::RULES,
-    "ts" => &languages::ts::RULES,
-    "tt" => &languages::tt::RULES,
-    "ug" => &languages::ug::RULES,
-    "uk" => &languages::uk::RULES,
-    "ur" => &languages::ur::RULES,
-    "uz" => &languages::uz::RULES,
-    "ve" => &languages::ve::RULES,
-    "vi" => &languages::vi::RULES,
-    "wa" => &languages::wa::RULES,
-    "wo" => &languages::wo::RULES,
-    "xh" => &languages::xh::RULES,
-    "yi" => &languages::yi::RULES,
-    "yo" => &languages::yo::RULES,
-    "zh" => &languages::zh::RULES,
-    "zu" => &languages::zu::RULES,
-};
+pub(crate) static BASE_PROFILES: &[(&str, &LanguageProfile)] = &[
+    ("aa", &languages::aa::PROFILE),
+    ("ab", &languages::ab::PROFILE),
+    ("ae", &languages::ae::PROFILE),
+    ("af", &languages::af::PROFILE),
+    ("ak", &languages::ak::PROFILE),
+    ("am", &languages::am::PROFILE),
+    ("an", &languages::an::PROFILE),
+    ("ar", &languages::ar::PROFILE),
+    ("as", &languages::r#as::PROFILE),
+    ("av", &languages::av::PROFILE),
+    ("ay", &languages::ay::PROFILE),
+    ("az", &languages::az::PROFILE),
+    ("ba", &languages::ba::PROFILE),
+    ("be", &languages::be::PROFILE),
+    ("bg", &languages::bg::PROFILE),
+    ("bi", &languages::bi::PROFILE),
+    ("bm", &languages::bm::PROFILE),
+    ("bn", &languages::bn::PROFILE),
+    ("bo", &languages::bo::PROFILE),
+    ("br", &languages::br::PROFILE),
+    ("bs", &languages::bs::PROFILE),
+    ("ca", &languages::ca::PROFILE),
+    ("ce", &languages::ce::PROFILE),
+    ("ch", &languages::ch::PROFILE),
+    ("co", &languages::co::PROFILE),
+    ("cr", &languages::cr::PROFILE),
+    ("cs", &languages::cs::PROFILE),
+    ("cu", &languages::cu::PROFILE),
+    ("cv", &languages::cv::PROFILE),
+    ("cy", &languages::cy::PROFILE),
+    ("da", &languages::da::PROFILE),
+    ("de", &languages::de::PROFILE),
+    ("dv", &languages::dv::PROFILE),
+    ("dz", &languages::dz::PROFILE),
+    ("ee", &languages::ee::PROFILE),
+    ("el", &languages::el::PROFILE),
+    ("en", &languages::en::PROFILE),
+    ("eo", &languages::eo::PROFILE),
+    ("es", &languages::es::PROFILE),
+    ("et", &languages::et::PROFILE),
+    ("eu", &languages::eu::PROFILE),
+    ("fa", &languages::fa::PROFILE),
+    ("ff", &languages::ff::PROFILE),
+    ("fi", &languages::fi::PROFILE),
+    ("fj", &languages::fj::PROFILE),
+    ("fo", &languages::fo::PROFILE),
+    ("fr", &languages::fr::PROFILE),
+    ("fy", &languages::fy::PROFILE),
+    ("ga", &languages::ga::PROFILE),
+    ("gd", &languages::gd::PROFILE),
+    ("gl", &languages::gl::PROFILE),
+    ("gn", &languages::gn::PROFILE),
+    ("gu", &languages::gu::PROFILE),
+    ("gv", &languages::gv::PROFILE),
+    ("ha", &languages::ha::PROFILE),
+    ("he", &languages::he::PROFILE),
+    ("hi", &languages::hi::PROFILE),
+    ("ho", &languages::ho::PROFILE),
+    ("hr", &languages::hr::PROFILE),
+    ("ht", &languages::ht::PROFILE),
+    ("hu", &languages::hu::PROFILE),
+    ("hy", &languages::hy::PROFILE),
+    ("hz", &languages::hz::PROFILE),
+    ("ia", &languages::ia::PROFILE),
+    ("id", &languages::id::PROFILE),
+    ("ie", &languages::ie::PROFILE),
+    ("ig", &languages::ig::PROFILE),
+    ("ii", &languages::ii::PROFILE),
+    ("ik", &languages::ik::PROFILE),
+    ("io", &languages::io::PROFILE),
+    ("is", &languages::is::PROFILE),
+    ("it", &languages::it::PROFILE),
+    ("iu", &languages::iu::PROFILE),
+    ("ja", &languages::ja::PROFILE),
+    ("jv", &languages::jv::PROFILE),
+    ("ka", &languages::ka::PROFILE),
+    ("kg", &languages::kg::PROFILE),
+    ("ki", &languages::ki::PROFILE),
+    ("kj", &languages::kj::PROFILE),
+    ("kk", &languages::kk::PROFILE),
+    ("kl", &languages::kl::PROFILE),
+    ("km", &languages::km::PROFILE),
+    ("kn", &languages::kn::PROFILE),
+    ("ko", &languages::ko::PROFILE),
+    ("kr", &languages::kr::PROFILE),
+    ("ks", &languages::ks::PROFILE),
+    ("ku", &languages::ku::PROFILE),
+    ("kv", &languages::kv::PROFILE),
+    ("kw", &languages::kw::PROFILE),
+    ("ky", &languages::ky::PROFILE),
+    ("la", &languages::la::PROFILE),
+    ("lb", &languages::lb::PROFILE),
+    ("lg", &languages::lg::PROFILE),
+    ("li", &languages::li::PROFILE),
+    ("ln", &languages::ln::PROFILE),
+    ("lo", &languages::lo::PROFILE),
+    ("lt", &languages::lt::PROFILE),
+    ("lu", &languages::lu::PROFILE),
+    ("lv", &languages::lv::PROFILE),
+    ("mg", &languages::mg::PROFILE),
+    ("mh", &languages::mh::PROFILE),
+    ("mi", &languages::mi::PROFILE),
+    ("mk", &languages::mk::PROFILE),
+    ("ml", &languages::ml::PROFILE),
+    ("mn", &languages::mn::PROFILE),
+    ("mr", &languages::mr::PROFILE),
+    ("ms", &languages::ms::PROFILE),
+    ("mt", &languages::mt::PROFILE),
+    ("my", &languages::my::PROFILE),
+    ("na", &languages::na::PROFILE),
+    ("nb", &languages::nb::PROFILE),
+    ("nd", &languages::nd::PROFILE),
+    ("ne", &languages::ne::PROFILE),
+    ("ng", &languages::ng::PROFILE),
+    ("nl", &languages::nl::PROFILE),
+    ("nn", &languages::nn::PROFILE),
+    ("no", &languages::no::PROFILE),
+    ("nr", &languages::nr::PROFILE),
+    ("nv", &languages::nv::PROFILE),
+    ("ny", &languages::ny::PROFILE),
+    ("oc", &languages::oc::PROFILE),
+    ("oj", &languages::oj::PROFILE),
+    ("om", &languages::om::PROFILE),
+    ("or", &languages::or::PROFILE),
+    ("os", &languages::os::PROFILE),
+    ("pa", &languages::pa::PROFILE),
+    ("pi", &languages::pi::PROFILE),
+    ("pl", &languages::pl::PROFILE),
+    ("ps", &languages::ps::PROFILE),
+    ("pt", &languages::pt::PROFILE),
+    ("qu", &languages::qu::PROFILE),
+    ("rm", &languages::rm::PROFILE),
+    ("rn", &languages::rn::PROFILE),
+    ("ro", &languages::ro::PROFILE),
+    ("ru", &languages::ru::PROFILE),
+    ("rw", &languages::rw::PROFILE),
+    ("sa", &languages::sa::PROFILE),
+    ("sc", &languages::sc::PROFILE),
+    ("sd", &languages::sd::PROFILE),
+    ("se", &languages::se::PROFILE),
+    ("sg", &languages::sg::PROFILE),
+    ("si", &languages::si::PROFILE),
+    ("sk", &languages::sk::PROFILE),
+    ("sl", &languages::sl::PROFILE),
+    ("sm", &languages::sm::PROFILE),
+    ("sn", &languages::sn::PROFILE),
+    ("so", &languages::so::PROFILE),
+    ("sq", &languages::sq::PROFILE),
+    ("sr", &languages::sr::PROFILE),
+    ("ss", &languages::ss::PROFILE),
+    ("st", &languages::st::PROFILE),
+    ("su", &languages::su::PROFILE),
+    ("sv", &languages::sv::PROFILE),
+    ("sw", &languages::sw::PROFILE),
+    ("ta", &languages::ta::PROFILE),
+    ("te", &languages::te::PROFILE),
+    ("tg", &languages::tg::PROFILE),
+    ("th", &languages::th::PROFILE),
+    ("ti", &languages::ti::PROFILE),
+    ("tk", &languages::tk::PROFILE),
+    ("tl", &languages::tl::PROFILE),
+    ("tn", &languages::tn::PROFILE),
+    ("to", &languages::to::PROFILE),
+    ("tr", &languages::tr::PROFILE),
+    ("ts", &languages::ts::PROFILE),
+    ("tt", &languages::tt::PROFILE),
+    ("tw", &languages::tw::PROFILE),
+    ("ty", &languages::ty::PROFILE),
+    ("ug", &languages::ug::PROFILE),
+    ("uk", &languages::uk::PROFILE),
+    ("ur", &languages::ur::PROFILE),
+    ("uz", &languages::uz::PROFILE),
+    ("ve", &languages::ve::PROFILE),
+    ("vi", &languages::vi::PROFILE),
+    ("vo", &languages::vo::PROFILE),
+    ("wa", &languages::wa::PROFILE),
+    ("wo", &languages::wo::PROFILE),
+    ("xh", &languages::xh::PROFILE),
+    ("yi", &languages::yi::PROFILE),
+    ("yo", &languages::yo::PROFILE),
+    ("za", &languages::za::PROFILE),
+    ("zh", &languages::zh::PROFILE),
+    ("zu", &languages::zu::PROFILE),
+];
+
+pub(crate) static SCRIPT_PROFILES: &[(&str, &LanguageProfile)] = &[
+    ("az-Latn", &languages::az::PROFILE),
+    ("be-Cyrl", &languages::be::PROFILE),
+    ("iu-Cans", &languages::iu::PROFILE),
+    ("iu-Latn", &languages::iu::LATN),
+    ("ks-Arab", &languages::ks::PROFILE),
+    ("ku-Latn", &languages::ku::PROFILE),
+    ("mn-Cyrl", &languages::mn::PROFILE),
+    ("pa-Arab", &languages::pa::ARAB),
+    ("pa-Guru", &languages::pa::PROFILE),
+    ("sd-Arab", &languages::sd::PROFILE),
+    ("sr-Cyrl", &languages::sr::PROFILE),
+    ("sr-Latn", &languages::sr::LATN),
+    ("ug-Arab", &languages::ug::PROFILE),
+    ("ur-Arab", &languages::ur::PROFILE),
+    ("uz-Arab", &languages::uz::ARAB),
+    ("uz-Cyrl", &languages::uz::CYRL),
+    ("uz-Latn", &languages::uz::PROFILE),
+    ("yi-Hebr", &languages::yi::PROFILE),
+    ("zh-Hans", &languages::zh::PROFILE),
+    ("zh-Hant", &languages::zh::HANT),
+];
+
+pub(crate) fn base_profile(language: &str) -> Option<&'static LanguageProfile> {
+    BASE_PROFILES
+        .iter()
+        .find_map(|(code, profile)| (*code == language).then_some(*profile))
+}
+
+pub(crate) fn script_profile(locale: &str) -> Option<&'static LanguageProfile> {
+    SCRIPT_PROFILES
+        .iter()
+        .find_map(|(candidate, profile)| (*candidate == locale).then_some(*profile))
+}
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::language_rules::LanguageRules;
+    use crate::{Error, InflectionRequest, Number};
+    use alloc::string::ToString;
+    use alloc::vec::Vec;
 
-    #[test]
-    fn test_all_languages_registered() {
-        assert_eq!(LANGUAGE_RULES_MAP.len(), 167);
+    const ISO_639_1_CODES: &str = "aa ab ae af ak am an ar as av ay az ba be bg bi bm bn bo br bs ca ce ch co cr cs cu cv cy da de dv dz ee el en eo es et eu fa ff fi fj fo fr fy ga gd gl gn gu gv ha he hi ho hr ht hu hy hz ia id ie ig ii ik io is it iu ja jv ka kg ki kj kk kl km kn ko kr ks ku kv kw ky la lb lg li ln lo lt lu lv mg mh mi mk ml mn mr ms mt my na nb nd ne ng nl nn no nr nv ny oc oj om or os pa pi pl ps pt qu rm rn ro ru rw sa sc sd se sg si sk sl sm sn so sq sr ss st su sv sw ta te tg th ti tk tl tn to tr ts tt tw ty ug uk ur uz ve vi vo wa wo xh yi yo za zh zu";
+
+    fn profiles() -> impl Iterator<Item = &'static LanguageProfile> {
+        BASE_PROFILES
+            .iter()
+            .chain(SCRIPT_PROFILES)
+            .map(|(_, profile)| *profile)
     }
 
     #[test]
-    fn test_lookup_english() {
-        let rules = LANGUAGE_RULES_MAP.get("en").unwrap();
-        assert_eq!(rules.language(), "en");
+    fn contains_every_iso_set_one_code() {
+        assert_eq!(BASE_PROFILES.len(), 183);
+        for code in ISO_639_1_CODES.split_ascii_whitespace() {
+            assert!(
+                BASE_PROFILES
+                    .iter()
+                    .any(|(candidate, _)| *candidate == code),
+                "missing ISO 639-1 code: {code}"
+            );
+        }
+        for (code, profile) in BASE_PROFILES {
+            assert_eq!(*code, profile.language());
+            assert_eq!(
+                base_profile(code).map(LanguageProfile::language),
+                Some(*code)
+            );
+        }
+        assert!(base_profile("xx").is_none());
     }
 
     #[test]
-    fn test_lookup_turkish() {
-        let rules = LANGUAGE_RULES_MAP.get("tr").unwrap();
-        assert_eq!(rules.language(), "tr");
+    fn script_profiles_match_their_keys() {
+        assert_eq!(SCRIPT_PROFILES.len(), 20);
+        for (locale, profile) in SCRIPT_PROFILES {
+            assert_eq!(*locale, profile.locale());
+            assert_eq!(
+                script_profile(locale).map(LanguageProfile::locale),
+                Some(*locale)
+            );
+        }
+        assert!(script_profile("en-Cyrl").is_none());
     }
 
     #[test]
-    fn test_lookup_delegate_has_own_language() {
-        let rules = LANGUAGE_RULES_MAP.get("az").unwrap();
-        assert_eq!(rules.language(), "az");
-    }
-
-    #[test]
-    fn test_lookup_nonexistent() {
-        assert!(LANGUAGE_RULES_MAP.get("xx").is_none());
-    }
-
-    #[test]
-    fn test_all_languages_have_correct_language_code() {
-        for (code, rules) in LANGUAGE_RULES_MAP.entries() {
-            assert_eq!(*code, rules.language());
+    fn every_verified_lexeme_round_trips_through_its_profile() {
+        for profile in profiles() {
+            for entry in profile.lexemes() {
+                assert_eq!(
+                    profile
+                        .inflect(InflectionRequest::singular(entry.lemma()))
+                        .map(|forms| forms.primary().to_string()),
+                    Ok(entry.lemma().to_string())
+                );
+                match entry.plural() {
+                    Some(plural) => {
+                        let forms = profile
+                            .inflect(InflectionRequest::plural(entry.lemma()))
+                            .unwrap();
+                        assert_eq!(forms.primary(), plural);
+                        assert_eq!(
+                            forms
+                                .alternatives()
+                                .iter()
+                                .map(AsRef::as_ref)
+                                .collect::<Vec<_>>(),
+                            entry.alternatives()
+                        );
+                    }
+                    None => assert_eq!(
+                        profile.inflect(InflectionRequest::plural(entry.lemma())),
+                        Err(Error::NoForm {
+                            locale: profile.locale(),
+                            lemma: entry.lemma().to_string(),
+                            number: Number::Plural,
+                        })
+                    ),
+                }
+            }
         }
     }
 
     #[test]
-    fn test_singularize_via_registry() {
-        let rules = LANGUAGE_RULES_MAP.get("en").unwrap();
-        assert_eq!(rules.singularize("users"), "user");
-    }
-
-    #[test]
-    fn test_pluralize_via_registry() {
-        let rules = LANGUAGE_RULES_MAP.get("en").unwrap();
-        let result = rules.pluralize("user");
-        assert!(result.iter().any(|v| v == "users"));
+    fn every_profile_has_a_defined_unknown_lemma_policy() {
+        for profile in profiles() {
+            let result = profile.inflect(InflectionRequest::plural("__unknown_lemma__"));
+            if profile.invariant {
+                assert!(result.is_ok());
+            } else if profile.default_rule.is_some() {
+                if profile.locale() == "eo" {
+                    assert!(result.is_err());
+                } else {
+                    assert!(result.is_ok());
+                }
+            } else {
+                assert!(result.is_err());
+            }
+            if !profile.invariant
+                && profile.default_rule.is_none()
+                && profile.capabilities().lexical_classes().is_empty()
+            {
+                assert!(!profile.lexemes().is_empty());
+            }
+        }
     }
 }

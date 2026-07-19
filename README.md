@@ -6,102 +6,58 @@
 [![License](https://img.shields.io/crates/l/i18n_inflector)](https://github.com/theseus-rs/i18n-inflector#license)
 [![Semantic Versioning](https://img.shields.io/badge/%E2%9A%99%EF%B8%8F_SemVer-2.0.0-blue)](https://semver.org/spec/v2.0.0.html)
 
-i18n_inflector is a Rust crate that provides a comprehensive set of inflection rules for multiple languages, allowing
-you to easily convert words between different forms (e.g., singular to plural, plural to singular) in an
-internationalized context.
+`i18n_inflector` provides correctness-first dictionary-form noun inflection for all 183 ISO
+639-1 language codes. It accepts BCP 47 language identifiers, normalizes lemmas to Unicode NFC,
+and returns typed errors when a form cannot be generated without guessing.
+
+The API intentionally accepts a singular dictionary lemma, not an arbitrary inflected word. Results
+come from an attested conformance lexicon, an invariant-number profile, or an explicitly documented
+productive lexical class.
 
 ## Example
 
 ```rust
-use i18n_inflector::{language_rules, LanguageRules};
+use i18n_inflector::{InflectionRequest, LexicalClassId, language_profile};
 
 fn main() -> i18n_inflector::Result<()> {
-    // English
-    let en = language_rules("en")?;
-    assert_eq!(en.singularize("users"), "user");
-    assert_eq!(en.singularize("categories"), "category");
+    let english = language_profile("en-US")?;
 
-    let plurals = en.pluralize("user");
-    assert!(plurals.iter().any(|v| v == "users"));
+    assert_eq!(
+        english.inflect(InflectionRequest::plural("child"))?.primary(),
+        "children"
+    );
+    assert_eq!(
+        english
+            .inflect(
+                InflectionRequest::plural("project")
+                    .lexical_class(LexicalClassId::new("regular-s"))
+            )?
+            .primary(),
+        "projects"
+    );
 
-    // Spanish
-    assert_eq!(language_rules("es")?.singularize("ciudades"), "ciudad");
+    let japanese = language_profile("ja")?;
+    assert_eq!(
+        japanese.inflect(InflectionRequest::plural("猫"))?.primary(),
+        "猫"
+    );
 
-    // French
-    assert_eq!(language_rules("fr")?.singularize("journaux"), "journal");
-
-    // Japanese
-    assert_eq!(language_rules("ja")?.singularize("user"), "user");
-
-    // Unsupported locale returns an error
-    assert!(language_rules("xx").is_err());
-    
     Ok(())
 }
 ```
 
-## Supported Languages
+Use `LanguageProfile::capabilities()` to discover the selectors and lexical classes supported by a
+profile.
 
-The following ISO 639-1 language codes are supported:
+## Scope
 
-| Code | Language          | Code | Language          | Code | Language          |
-|------|-------------------|------|-------------------|------|-------------------|
-| aa   | Afar              | ho   | Hiri Motu         | om   | Oromo             |
-| ab   | Abkhaz            | hr   | Croatian          | or   | Odia              |  
-| ae   | Avestan           | ht   | Haitian Creole    | os   | Ossetian          |  
-| af   | Afrikaans         | hu   | Hungarian         | pa   | Punjabi           |  
-| ak   | Akan              | hy   | Armenian          | pi   | Pali              |  
-| am   | Amharic           | ia   | Interlingua       | pl   | Polish            |  
-| an   | Aragonese         | id   | Indonesian        | ps   | Pashto            |  
-| ar   | Arabic            | ie   | Interlingue       | pt   | Portuguese        |  
-| as   | Assamese          | ig   | Igbo              | qu   | Quechua           |  
-| av   | Avar              | ii   | Sichuan Yi        | rm   | Romansh           |  
-| ay   | Aymara            | ik   | Inupiaq           | ro   | Romanian          |  
-| az   | Azerbaijani       | is   | Icelandic         | ru   | Russian           |  
-| ba   | Bashkir           | it   | Italian           | rw   | Kinyarwanda       |  
-| be   | Belarusian        | iu   | Inuktitut         | sa   | Sanskrit          |  
-| bg   | Bulgarian         | ja   | Japanese          | sc   | Sardinian         |  
-| bi   | Bislama           | jv   | Javanese          | sd   | Sindhi            |  
-| bm   | Bambara           | ka   | Georgian          | se   | Northern Sami     |  
-| bn   | Bengali           | kg   | Kongo             | sg   | Sango             |  
-| bo   | Tibetan           | ki   | Kikuyu            | si   | Sinhala           |  
-| br   | Breton            | kj   | Kuanyama          | sk   | Slovak            |  
-| bs   | Bosnian           | kk   | Kazakh            | sl   | Slovenian         |  
-| ca   | Catalan           | km   | Khmer             | sm   | Samoan            |  
-| ce   | Chechen           | kn   | Kannada           | sn   | Shona             |  
-| ch   | Chamorro          | ko   | Korean            | so   | Somali            |  
-| co   | Corsican          | ku   | Kurdish           | sq   | Albanian          |  
-| cs   | Czech             | kv   | Komi              | sr   | Serbian           |  
-| cu   | Church Slavonic   | kw   | Cornish           | ss   | Swati             |  
-| cv   | Chuvash           | ky   | Kyrgyz            | st   | Southern Sotho    |  
-| cy   | Welsh             | la   | Latin             | su   | Sundanese         |  
-| da   | Danish            | lb   | Luxembourgish     | sv   | Swedish           |  
-| de   | German            | lg   | Luganda           | sw   | Swahili           |  
-| dv   | Divehi            | li   | Limburgish        | ta   | Tamil             |  
-| dz   | Dzongkha          | lo   | Lao               | te   | Telugu            |  
-| ee   | Ewe               | lt   | Lithuanian        | tg   | Tajik             |  
-| el   | Greek             | lu   | Luba-Katanga      | th   | Thai              |  
-| en   | English           | lv   | Latvian           | ti   | Tigrinya          |  
-| eo   | Esperanto         | mg   | Malagasy          | tk   | Turkmen           |  
-| es   | Spanish           | mi   | Māori             | tl   | Tagalog           |  
-| et   | Estonian          | mk   | Macedonian        | tn   | Tswana            |  
-| eu   | Basque            | ml   | Malayalam         | tr   | Turkish           |  
-| fa   | Persian           | mn   | Mongolian         | ts   | Tsonga            |  
-| ff   | Fula              | mr   | Marathi           | tt   | Tatar             |  
-| fi   | Finnish           | ms   | Malay             | ug   | Uyghur            |  
-| fj   | Fijian            | mt   | Maltese           | uk   | Ukrainian         |  
-| fo   | Faroese           | my   | Burmese           | ur   | Urdu              |  
-| fr   | French            | nb   | Norwegian Bokmål  | uz   | Uzbek             |  
-| fy   | Western Frisian   | nd   | Northern Ndebele  | ve   | Venda             |  
-| ga   | Irish             | ne   | Nepali            | vi   | Vietnamese        |  
-| gd   | Scottish Gaelic   | nl   | Dutch             | wa   | Walloon           |  
-| gl   | Galician          | nn   | Norwegian Nynorsk | wo   | Wolof             |  
-| gn   | Guarani           | no   | Norwegian         | xh   | Xhosa             |  
-| gu   | Gujarati          | nr   | Southern Ndebele  | yi   | Yiddish           |  
-| gv   | Manx              | nv   | Navajo            | yo   | Yoruba            |  
-| ha   | Hausa             | ny   | Chichewa          | zh   | Chinese           |  
-| he   | Hebrew            | oc   | Occitan           | zu   | Zulu              |  
-| hi   | Hindi             | oj   | Ojibwe            |      |                   |
+- Singular and plural dictionary/base or nominative forms
+- All ISO 639-1 codes and selected script-specific BCP 47 profiles
+- `no_std` environments with `alloc`
+- Typed outcomes for unsupported locales, selectors, classes, lemmas, and absent forms
+
+Dual, paucal, oblique case paradigms, and inflection from already-inflected input are outside the
+current API contract.
 
 ## License
 

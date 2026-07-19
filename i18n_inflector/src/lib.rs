@@ -1,33 +1,26 @@
-//! Multilingual noun singularization and pluralization.
+//! Correctness-first dictionary-form noun inflection for every ISO Set 1 language code.
 //!
-//! `i18n_inflector` provides functions to convert between singular and plural forms of nouns across
-//! ISO 639 two-letter language codes.
-//!
-//! # Quick Start
+//! The input is a dictionary lemma, not an arbitrary already-inflected word. Successful results
+//! contain only attested entries or forms produced by an explicitly selected productive class.
 //!
 //! ```
-//! use i18n_inflector::{language_rules, LanguageRules};
+//! use i18n_inflector::{InflectionRequest, LexicalClassId, language_profile};
 //!
-//! // English
-//! let en = language_rules("en").unwrap();
-//! assert_eq!(en.singularize("users"), "user");
-//! assert_eq!(en.singularize("categories"), "category");
-//! assert_eq!(en.singularize("children"), "child");
-//!
-//! let plurals = en.pluralize("user");
-//! assert!(plurals.iter().any(|v| v == "users"));
-//!
-//! // Spanish
-//! assert_eq!(language_rules("es").unwrap().singularize("ciudades"), "ciudad");
-//!
-//! // French
-//! assert_eq!(language_rules("fr").unwrap().singularize("journaux"), "journal");
-//!
-//! // Japanese
-//! assert_eq!(language_rules("ja").unwrap().singularize("user"), "user");
-//!
-//! // Unsupported locale returns an error
-//! assert!(language_rules("xx").is_err());
+//! let english = language_profile("en-US")?;
+//! assert_eq!(
+//!     english.inflect(InflectionRequest::plural("child"))?.primary(),
+//!     "children"
+//! );
+//! assert_eq!(
+//!     english
+//!         .inflect(
+//!             InflectionRequest::plural("project")
+//!                 .lexical_class(LexicalClassId::new("regular-s"))
+//!         )?
+//!         .primary(),
+//!     "projects"
+//! );
+//! # Ok::<(), i18n_inflector::Error>(())
 //! ```
 
 #![no_std]
@@ -38,98 +31,40 @@ extern crate std;
 extern crate alloc;
 
 mod error;
-mod language_rules;
+mod features;
 mod languages;
 mod locale;
+mod profile;
 mod registry;
 
 pub use error::{Error, Result};
-pub use language_rules::{LanguageRuleSet, LanguageRules};
+pub use features::{
+    Animacy, Countability, Gender, InflectionRequest, LexicalClassId, Number, SelectorKind,
+};
+pub use profile::{InflectedForms, LanguageCapabilities, LanguageProfile, LexicalClassSpec};
 
-use crate::locale::normalize_locale;
-use alloc::format;
-
-/// Returns the [`LanguageRuleSet`] for the given locale.
+/// Returns the language profile selected by a BCP 47 language identifier.
 ///
-/// The locale is normalized (case-insensitive, region suffixes stripped)
-/// before lookup. Returns an error if the base language code is not recognized.
+/// A region subtag is accepted and ignored when no region-specific profile is needed. An explicit
+/// script must have a registered profile and is never silently replaced with another script.
 ///
 /// # Errors
 ///
-/// Returns [`Error`] if the locale is not a supported language code.
-///
-/// # Examples
-///
-/// ```
-/// use i18n_inflector::{language_rules, LanguageRules};
-///
-/// # fn main() -> i18n_inflector::Result<()> {
-/// let rules = language_rules("en")?;
-/// assert_eq!(rules.language(), "en");
-/// assert_eq!(rules.singularize("users"), "user");
-///
-/// // Locale normalization
-/// let rules = language_rules("en-US")?;
-/// assert_eq!(rules.language(), "en");
-///
-/// // Unsupported locale
-/// assert!(language_rules("xx").is_err());
-/// # Ok(())
-/// # }
-/// ```
-pub fn language_rules(locale: &str) -> Result<&'static LanguageRuleSet> {
-    let normalized = normalize_locale(locale);
-    registry::LANGUAGE_RULES_MAP
-        .get(normalized.as_str())
-        .copied()
-        .ok_or_else(|| Error::new(format!("unsupported locale: {locale}")))
+/// Returns [`Error::InvalidLocale`] for malformed identifiers and [`Error::UnsupportedLocale`] for
+/// well-formed identifiers without a supported language or script profile.
+pub fn language_profile(locale: &str) -> Result<&'static LanguageProfile> {
+    locale::resolve(locale)
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use alloc::string::ToString;
 
     #[test]
-    fn test_language_rules_english() {
-        let rules = language_rules("en").unwrap();
-        assert_eq!(rules.language(), "en");
-        assert_eq!(rules.singularize("users"), "user");
-    }
-
-    #[test]
-    fn test_language_rules_locale_normalization() {
-        let rules = language_rules("en-US").unwrap();
-        assert_eq!(rules.language(), "en");
-
-        let rules = language_rules("EN").unwrap();
-        assert_eq!(rules.language(), "en");
-
-        let rules = language_rules("EN-US").unwrap();
-        assert_eq!(rules.language(), "en");
-
-        let rules = language_rules("en_US").unwrap();
-        assert_eq!(rules.language(), "en");
-    }
-
-    #[test]
-    fn test_language_rules_unsupported() {
-        let err = language_rules("xx").unwrap_err();
-        assert_eq!(err.to_string(), "unsupported locale: xx");
-    }
-
-    #[test]
-    fn test_language_rules_pluralize() {
-        let rules = language_rules("en").unwrap();
-        let result = rules.pluralize("child");
-        assert_eq!(result, alloc::vec!["children"]);
-    }
-
-    #[test]
-    fn test_language_rules_delegate() {
-        let rules = language_rules("az").unwrap();
-        assert_eq!(rules.language(), "az");
-        // Delegates to Turkish
-        assert_eq!(rules.singularize("kullanicilar"), "kullanici");
+    fn public_entry_point_resolves_profiles() {
+        assert_eq!(
+            language_profile("en").map(LanguageProfile::language),
+            Ok("en")
+        );
     }
 }
