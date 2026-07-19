@@ -11,7 +11,7 @@
 and returns typed errors when a form cannot be generated without guessing.
 
 The API intentionally accepts a singular dictionary lemma, not an arbitrary inflected word. Results
-come from an attested conformance lexicon, an invariant-number profile, or an explicitly documented
+come from a curated embedded lexicon, an invariant-number profile, or an explicitly documented
 productive lexical class.
 
 ## Example

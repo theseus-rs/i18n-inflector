@@ -1,20 +1,20 @@
-use crate::profile::{LanguageProfile, Rule, VerifiedLexeme};
+use crate::profile::{LanguageProfile, LexicalClassSpec, Rule, VerifiedLexeme};
+
+const CLASSES: &[LexicalClassSpec] = &[LexicalClassSpec::new(
+    "vowel-harmony",
+    "regular nouns whose plural follows two-way vowel harmony",
+    Rule::Turkish,
+)];
 
 const LEXEMES: &[VerifiedLexeme] = &[
     VerifiedLexeme::new("köy", "köyler"),
     VerifiedLexeme::new("araba", "arabalar"),
     VerifiedLexeme::new("şehir", "şehirler"),
+    VerifiedLexeme::new("saat", "saatler"),
 ];
 
-pub(crate) static PROFILE: LanguageProfile = LanguageProfile::new(
-    "tr",
-    "tr",
-    false,
-    Some(Rule::Turkish),
-    &[],
-    (false, false),
-    LEXEMES,
-);
+pub(crate) static PROFILE: LanguageProfile =
+    LanguageProfile::new("tr", "tr", false, None, CLASSES, (false, false), LEXEMES);
 
 #[cfg(test)]
 mod tests {

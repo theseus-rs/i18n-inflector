@@ -3,7 +3,7 @@ use crate::profile::{LanguageProfile, VerifiedLexeme};
 const LEXEMES: &[VerifiedLexeme] = &[VerifiedLexeme::new("رِسَالَة", "رَسَائِلُ")];
 
 pub(crate) static PROFILE: LanguageProfile =
-    LanguageProfile::new("ar", "ar", false, None, &[], (true, false), LEXEMES);
+    LanguageProfile::new("ar", "ar", false, None, &[], (false, false), LEXEMES);
 
 #[cfg(test)]
 mod tests {
