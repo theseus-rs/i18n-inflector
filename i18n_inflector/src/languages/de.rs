@@ -17,6 +17,11 @@ const CLASSES: &[LexicalClassSpec] = &[
         Rule::Suffix("er"),
     ),
     LexicalClassSpec::new(
+        "suffix-n",
+        "nouns taking -n without a stem change",
+        Rule::Suffix("n"),
+    ),
+    LexicalClassSpec::new(
         "suffix-s",
         "loanwords taking -s without a stem change",
         Rule::Suffix("s"),
@@ -35,8 +40,24 @@ pub(crate) static PROFILE: LanguageProfile =
 
 #[cfg(test)]
 mod tests {
+    use crate::{InflectionRequest, LexicalClassId};
+    use alloc::string::ToString;
+
     #[test]
     fn profile_data_is_valid() {
         crate::languages::assert_language_profiles("de", &[&super::PROFILE]);
+    }
+
+    #[test]
+    fn suffix_n_pluralizes_nouns_ending_in_e() {
+        let request =
+            InflectionRequest::plural("schule").lexical_class(LexicalClassId::new("suffix-n"));
+
+        assert_eq!(
+            super::PROFILE
+                .inflect(request)
+                .map(|forms| forms.primary().to_string()),
+            Ok("schulen".to_string())
+        );
     }
 }
